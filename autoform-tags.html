@@ -1,19 +1,19 @@
 <template name="afTags">
-	<div class="form-control">
+	<div class="form-control aftags-container">
 		{{#each tags}}
 			{{#if isSelected @index}}
 				<span id="aftags-input" contenteditable="true" autofocus data-index="{{@index}}">
 					{{this}}
 				</span>
 			{{else}}
-				<span class="aftags-tag label label-primary">
-					<span>{{this}}</span>
+				<span class="label label-primary">
+					<span class="aftags-tag" data-index="{{@index}}">{{this}}</span>
 					<button type="button" class="close aftags-close" data-index="{{@index}}">&times;</button>
 				</span>
 			{{/if}}
 		{{/each}}
-		{{#if isSelected -1}}
-			<span class="aftags-tag label label-primary" data-index="-1">{{this}}</span>
+		{{#if isSelected null}}
+			<span id="aftags-input" contenteditable="true" autofocus data-index="-1"></span>
 		{{/if}}
 	</div>
 	<!-- autoform related field-->

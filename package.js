@@ -14,13 +14,9 @@ Package.onUse(function(api) {
   api.versionsFrom('1.6');
 
 	api.use([
-	  'check',
 	  'ecmascript',
-	  'underscore',
-	  'http',
-	  'reactive-var',
+	  'reactive-dict',
 	  'templating@1.3.2',
-	  'fortawesome:fontawesome@4.7.0',
 	  'aldeed:autoform@6.2.0',
 	'aldeed:template-extension@4.0.0'
 	]);
@@ -28,7 +24,7 @@ Package.onUse(function(api) {
 	api.addFiles([
 		'autoform-tags.css',
 		'autoform-tags.html',
-		'autoform-faicon.js',
+		'autoform-tags.js',
 	], 'client');
 });
 
