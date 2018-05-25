@@ -8,3 +8,8 @@
 	min-width: 20px;
 	border: solid 1px;
 }
+
+#aftags-options {
+	overflow-y: scroll;
+	-webkit-overflow-scrolling: touch;
+}

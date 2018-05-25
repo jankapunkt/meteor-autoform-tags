@@ -17,6 +17,17 @@
 				  contenteditable="true" autofocus data-index="-1"></span>
 		{{/if}}
 	</div>
+	{{#if showSelectOptions}}
+		<div id="aftags-options">
+			{{#each selectOptions}}
+				{{#unless selected this}}
+				<span class="label label-default">
+					<span class="aftags-tag" data-target="{{this}}">{{this}}</span>
+				</span>
+				{{/unless}}
+			{{/each}}
+		</div>
+	{{/if}}
 	<!-- autoform related field-->
 	<input type="hidden" id="afTags-hiddenInput" data-schema-key="{{dataSchemaKey}}" />
 </template>

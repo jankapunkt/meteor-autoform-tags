@@ -33,16 +33,16 @@ Template.afTags.onCreated(function () {
 		console.log(data);
 
 		// create dict of select options
-		// (allowedValues)
-		let selectOptions;
+		let optionsMap;
 		if (data.selectOptions) {
-			selectOptions = {};
+			optionsMap = {};
 			data.selectOptions.forEach(entry => {
-				selectOptions[entry] = true;
+				optionsMap[entry] = true;
 			});
 		}
 
-		instance.state.set('selectOptions', selectOptions);
+		instance.state.set('selectOptions', data.selectOptions.sort());
+		instance.state.set('optionsMap', optionsMap);
 		instance.state.set('onlyOptions', !!atts.onlyOptions);
 		instance.state.set('dataSchemaKey', atts['data-schema-key']);
 
@@ -71,6 +71,19 @@ Template.afTags.helpers({
 	},
 	focus() {
 		return Template.instance().state.get('focus');
+	},
+	onlyOptions() {
+		return Template.instance().state.get('onlyOptions');
+	},
+	showSelectOptions() {
+		return Template.instance().state.get('showSelectOptions');
+	},
+	selectOptions() {
+		return Template.instance().state.get('selectOptions');
+	},
+	selected(tag) {
+		const value = Template.instance().state.get('value');
+		return value && value.indexOf(tag) > -1;
 	}
 });
 
@@ -91,8 +104,14 @@ Template.afTags.events({
 
 	'keydown #aftags-input'(event, templateInstance) {
 
-		// apply on enter
-		if (event.keyCode !== 13 && event.keyCode !== 27) return;
+
+		// if typing...
+		if (event.keyCode !== 13 && event.keyCode !== 27) {
+			templateInstance.state.set('showSelectOptions', true);
+			return;
+		}
+
+		templateInstance.state.set('showSelectOptions', false);
 
 		event.preventDefault();
 		event.stopPropagation();
@@ -108,7 +127,7 @@ Template.afTags.events({
 		const target = templateInstance.state.get('target');
 		const value = templateInstance.state.get('value');
 		const onlyOptions = templateInstance.state.get('onlyOptions');
-		const selectOptions = templateInstance.state.get('selectOptions');
+		const optionsMap = templateInstance.state.get('optionsMap');
 
 		// ESC -> cancel
 		if (event.keyCode === 27) {
@@ -126,7 +145,7 @@ Template.afTags.events({
 			return;
 		}
 
-		if (onlyOptions && selectOptions && !selectOptions[tag]) {
+		if (onlyOptions && optionsMap && !optionsMap[tag]) {
 			// TODO show err msg
 			console.log("tag not allowed")
 			return;
