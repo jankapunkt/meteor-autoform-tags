@@ -3,6 +3,8 @@
 	cursor: pointer;
 }
 
-.aftags-input {
-	width: 100%
+#aftags-input {
+	width: 100%;
+	min-width: 20px;
+	border: solid 1px;
 }

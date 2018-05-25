@@ -13,7 +13,8 @@
 			{{/if}}
 		{{/each}}
 		{{#if isSelected null}}
-			<span id="aftags-input" contenteditable="true" autofocus data-index="-1"></span>
+			<span id="aftags-input" class="{{#unless focus}}text-muted{{/unless}}"
+				  contenteditable="true" autofocus data-index="-1"></span>
 		{{/if}}
 	</div>
 	<!-- autoform related field-->

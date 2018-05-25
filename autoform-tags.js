@@ -12,7 +12,8 @@ import './autoform-tags.html';
 AutoForm.addInputType('tags', {
 	template: 'afTags',
 	valueOut() {
-		return JSON.parse(this.val());
+		const val = this.val();
+		return val && JSON.parse(val);
 	},
 	valueIn(initialValue) {
 		return initialValue;
@@ -31,6 +32,18 @@ Template.afTags.onCreated(function () {
 		const { atts } = data;
 		console.log(data);
 
+		// create dict of select options
+		// (allowedValues)
+		let selectOptions;
+		if (data.selectOptions) {
+			selectOptions = {};
+			data.selectOptions.forEach(entry => {
+				selectOptions[entry] = true;
+			});
+		}
+
+		instance.state.set('selectOptions', selectOptions);
+		instance.state.set('onlyOptions', !!atts.onlyOptions);
 		instance.state.set('dataSchemaKey', atts['data-schema-key']);
 
 		const { value } = data;
@@ -55,6 +68,9 @@ Template.afTags.helpers({
 	},
 	tags() {
 		return Template.instance().state.get('value');
+	},
+	focus() {
+		return Template.instance().state.get('focus');
 	}
 });
 
@@ -64,16 +80,23 @@ Template.afTags.events({
 		event.preventDefault();
 		// cancel on blur
 
+		const input = $(event.currentTarget);
+		const index = parseInt(input.attr('data-index'), 10);
+		const target = templateInstance.state.get('target');
 
+		if (index === target) {
+			templateInstance.state.set('target', null);
+		}
 	},
 
 	'keydown #aftags-input'(event, templateInstance) {
 
 		// apply on enter
-		if (event.keyCode !== 13) return;
+		if (event.keyCode !== 13 && event.keyCode !== 27) return;
 
 		event.preventDefault();
 		event.stopPropagation();
+
 
 		const input = $(event.currentTarget);
 		const tag = input.text().trim();
@@ -81,12 +104,33 @@ Template.afTags.events({
 			return;
 		}
 
-		//TODO check tag length here and show err msg if not satisfied
-		//TODO check if tag already exists and show err msg if true
-
 		const index = parseInt(input.attr('data-index'), 10);
 		const target = templateInstance.state.get('target');
 		const value = templateInstance.state.get('value');
+		const onlyOptions = templateInstance.state.get('onlyOptions');
+		const selectOptions = templateInstance.state.get('selectOptions');
+
+		// ESC -> cancel
+		if (event.keyCode === 27) {
+
+			if (index === -1) {
+				input.text('');
+			}
+			templateInstance.state.set('target', null);
+			return;
+		}
+
+		if (value.indexOf(tag) > -1) {
+			//show err msg
+			console.log("tag already exists")
+			return;
+		}
+
+		if (onlyOptions && selectOptions && !selectOptions[tag]) {
+			// TODO show err msg
+			console.log("tag not allowed")
+			return;
+		}
 
 
 		if (index === -1) {
@@ -118,7 +162,7 @@ Template.afTags.events({
 		$('#afTags-hiddenInput').val(JSON.stringify(value));
 		templateInstance.state.set('value', value);
 
-		setTimeout(()=>{
+		setTimeout(() => {
 			$('#aftags-input').focus();
 		}, 150);
 	},
@@ -130,7 +174,7 @@ Template.afTags.events({
 		const index = $(event.currentTarget).attr('data-index');
 		templateInstance.state.set('target', parseInt(index, 10));
 
-		setTimeout(()=>{
+		setTimeout(() => {
 			$('#aftags-input').focus();
 		}, 150);
 	},
