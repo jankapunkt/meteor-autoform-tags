@@ -1,15 +1,45 @@
-.aftags-tag {
-	margin : 1px;
-	cursor: pointer;
+.aftags-clickable {
+	cursor : pointer;
 }
+
+
+.aftags-tag {
+
+}
+
+
+.aftags-container {
+	display : table !important;
+}
+
+
+.aftags-options {
+	overflow-y                 : scroll;
+	-webkit-overflow-scrolling : touch;
+}
+
+
+.aftags-tag-container {
+	margin  : 4px;
+	padding : 4px;
+}
+
+
+.aftags-close {
+	padding-left : 8px;
+}
+
+
+.aftags-td-tags {
+
+}
+
+
+.aftags-td-input {
+	padding : 0px !important;
+}
+
 
 #aftags-input {
-	width: 100%;
-	min-width: 20px;
-	border: solid 1px;
-}
 
-#aftags-options {
-	overflow-y: scroll;
-	-webkit-overflow-scrolling: touch;
 }

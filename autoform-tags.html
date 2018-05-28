@@ -1,33 +1,49 @@
 <template name="afTags">
 	<div class="form-control aftags-container">
-		{{#each tags}}
-			{{#if isSelected @index}}
-				<span id="aftags-input" contenteditable="true" autofocus data-index="{{@index}}">
-					{{this}}
-				</span>
-			{{else}}
-				<span class="label label-primary">
-					<span class="aftags-tag" data-index="{{@index}}">{{this}}</span>
-					<button type="button" class="close aftags-close" data-index="{{@index}}">&times;</button>
+		<div>
+			{{#each tags}}
+				{{#if isSelected @index}}
+					<span id="aftags-input" class="btn btn-default {{#unless focus}}text-muted{{/unless}}"
+						  contenteditable="true" autofocus data-index="{{@index}}">
+						{{this}}
+					</span>
+				{{else}}
+					<div class="btn-group aftags-tag-container">
+						<span class="btn {{#if isDouble this}}btn-danger{{else}}btn-info{{/if}} btn-sm aftags-tag"
+							  data-index="{{@index}}">{{this}}</span>
+						<span class="btn btn-info btn-sm aftags-close" data-index="{{@index}}">&times;</span>
+					</div>
+				{{/if}}
+			{{/each}}
+
+			{{#if isSelected null}}
+				<span id="aftags-input" class="btn btn-default {{#unless focus}}text-muted{{/unless}}"
+					  contenteditable="true" autofocus data-index="-1">
+					{{#if showPlaceholder}}
+						<span class="text-muted">{{placeholder}}</span>
+					{{/if}}
 				</span>
 			{{/if}}
-		{{/each}}
-		{{#if isSelected null}}
-			<span id="aftags-input" class="{{#unless focus}}text-muted{{/unless}}"
-				  contenteditable="true" autofocus data-index="-1"></span>
-		{{/if}}
-	</div>
-	{{#if showSelectOptions}}
-		<div id="aftags-options">
-			{{#each selectOptions}}
-				{{#unless selected this}}
-				<span class="label label-default">
-					<span class="aftags-tag" data-target="{{this}}">{{this}}</span>
-				</span>
-				{{/unless}}
-			{{/each}}
 		</div>
-	{{/if}}
+
+		{{#if showSelectOptions}}
+			<hr>
+			<div class="aftags-options">
+				{{#each selectOptions}}
+					{{#unless selected this}}
+						<button class="btn btn-sm btn-default aftags-tag aftags-option" data-target="{{this}}">
+							{{this}}
+						</button>
+					{{else}}
+						<button class="btn btn-sm btn-default disabled" disabled>
+							{{this}}
+						</button>
+					{{/unless}}
+				{{/each}}
+			</div>
+		{{/if}}
+
+	</div>
 	<!-- autoform related field-->
 	<input type="hidden" id="afTags-hiddenInput" data-schema-key="{{dataSchemaKey}}" />
 </template>

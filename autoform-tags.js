@@ -20,12 +20,21 @@ AutoForm.addInputType('tags', {
 	},
 });
 
+// SRC: https://stackoverflow.com/a/6150060/3098783
+function selectElementContents(el) {
+	var range = document.createRange();
+	range.selectNodeContents(el);
+	var sel = window.getSelection();
+	sel.removeAllRanges();
+	sel.addRange(range);
+}
 
 Template.afTags.onCreated(function () {
 	const instance = this;
 	instance.state = new ReactiveDict();
 	instance.state.set('target', null);
 	instance.state.set('value', []);
+	instance.state.set('showPlaceholder', true);
 	instance.autorun(function () {
 
 		const { data } = instance;
@@ -41,13 +50,14 @@ Template.afTags.onCreated(function () {
 			});
 		}
 
-		instance.state.set('selectOptions', data.selectOptions.sort());
+		instance.state.set('selectOptions', data.selectOptions);
 		instance.state.set('optionsMap', optionsMap);
+		instance.state.set('placeholder', atts.placeholder);
 		instance.state.set('onlyOptions', !!atts.onlyOptions);
 		instance.state.set('dataSchemaKey', atts['data-schema-key']);
 
 		const { value } = data;
-		if (value) {
+		if (value && !nstance.state.get('value')) {
 			$('#afTags-hiddenInput').val(JSON.stringify(value));
 			instance.state.set('value', value);
 		}
@@ -76,7 +86,7 @@ Template.afTags.helpers({
 		return Template.instance().state.get('onlyOptions');
 	},
 	showSelectOptions() {
-		return Template.instance().state.get('showSelectOptions');
+		return Template.instance().state.get('selectOptions') && Template.instance().state.get('showSelectOptions');
 	},
 	selectOptions() {
 		return Template.instance().state.get('selectOptions');
@@ -84,50 +94,68 @@ Template.afTags.helpers({
 	selected(tag) {
 		const value = Template.instance().state.get('value');
 		return value && value.indexOf(tag) > -1;
+	},
+	showPlaceholder() {
+		return Template.instance().state.get('placeholder') && Template.instance().state.get('showPlaceholder');
+	},
+	placeholder() {
+		return Template.instance().state.get('placeholder');
+	},
+	isDouble(value) {
+		return Template.instance().state.get('double') === value.trim();
 	}
 });
 
+
 Template.afTags.events({
 
-	'blur #aftags-input'(event, templateInstance) {
+	'focus #aftags-input'(event, templateInstance) {
 		event.preventDefault();
+		console.log("focus #aftags-input");
+		templateInstance.state.set('showSelectOptions', true);
+		templateInstance.state.set('showPlaceholder', false);
+	},
+
+	'blur #aftags-input'(event, templateInstance) {
+		//event.preventDefault();
+		//event.stopPropagation();
+		console.log("blur #aftags-input");
+
 		// cancel on blur
+		const input = $(event.currentTarget);
+		const index = parseInt(input.attr('data-index'), 10);
+		const target = templateInstance.state.get('target');
+		if (index === target) {
+			templateInstance.state.set('target', null);
+		}
+		templateInstance.state.set('showSelectOptions', false);
+		templateInstance.state.set('showPlaceholder', $('#aftags-input').text().trim().length === 0);
+	},
+
+	'keydown #aftags-input'(event, templateInstance) {
+		console.log("keydown #aftags-input");
 
 		const input = $(event.currentTarget);
 		const index = parseInt(input.attr('data-index'), 10);
 		const target = templateInstance.state.get('target');
+		const value = templateInstance.state.get('value');
+		const tag = input.text().trim();
 
-		if (index === target) {
-			templateInstance.state.set('target', null);
-		}
-	},
-
-	'keydown #aftags-input'(event, templateInstance) {
-
+		// index !== means we are not editing a tag
+		// which could lead a user to hit enter to imply
+		// that the 'old' value should remain thus creating a false double
+		const isDouble = index !== target && value.indexOf(tag) > -1;
+		templateInstance.state.set('double', isDouble ? tag : null);
 
 		// if typing...
 		if (event.keyCode !== 13 && event.keyCode !== 27) {
-			templateInstance.state.set('showSelectOptions', true);
 			return;
 		}
-
-		templateInstance.state.set('showSelectOptions', false);
 
 		event.preventDefault();
 		event.stopPropagation();
 
-
-		const input = $(event.currentTarget);
-		const tag = input.text().trim();
-		if (tag.length === 0 || tag === "") {
-			return;
-		}
-
-		const index = parseInt(input.attr('data-index'), 10);
-		const target = templateInstance.state.get('target');
-		const value = templateInstance.state.get('value');
-		const onlyOptions = templateInstance.state.get('onlyOptions');
-		const optionsMap = templateInstance.state.get('optionsMap');
+		if (isDouble) return;
 
 		// ESC -> cancel
 		if (event.keyCode === 27) {
@@ -136,14 +164,21 @@ Template.afTags.events({
 				input.text('');
 			}
 			templateInstance.state.set('target', null);
+			templateInstance.state.set('showPlaceholder', true);
+			templateInstance.state.set('double', null);
+			input.blur();
 			return;
 		}
 
-		if (value.indexOf(tag) > -1) {
-			//show err msg
-			console.log("tag already exists")
+
+		if (tag.length === 0 || tag === "") {
+			//TODO show err msg
 			return;
 		}
+
+
+		const onlyOptions = templateInstance.state.get('onlyOptions');
+		const optionsMap = templateInstance.state.get('optionsMap');
 
 		if (onlyOptions && optionsMap && !optionsMap[tag]) {
 			// TODO show err msg
@@ -164,11 +199,12 @@ Template.afTags.events({
 		templateInstance.state.set('value', value);
 		templateInstance.state.set('target', null);
 		input.text('');
-
 	},
 
 	'click .aftags-close'(event, templateInstance) {
 		event.preventDefault();
+		event.stopPropagation();
+		console.log("click .aftags-close");
 		//delete tag
 
 		const input = $(event.currentTarget);
@@ -188,13 +224,36 @@ Template.afTags.events({
 
 	'click .aftags-tag'(event, templateInstance) {
 		event.preventDefault();
-		//edit tag
+		event.stopPropagation();
+		console.log("click .aftags-tag");
 
+		//edit tag
 		const index = $(event.currentTarget).attr('data-index');
 		templateInstance.state.set('target', parseInt(index, 10));
+		templateInstance.state.set('showSelectOptions', true);
+		templateInstance.state.set('showPlaceholder', false);
 
 		setTimeout(() => {
 			$('#aftags-input').focus();
 		}, 150);
 	},
+
+	'mousedown .aftags-option'(event, templateInstance) {
+		event.preventDefault();
+		event.stopPropagation();
+		console.log("click .aftags-option");
+
+		const input = $(event.currentTarget);
+		const target = input.attr('data-target');
+		const value = templateInstance.state.get('value');
+
+		value.push(target);
+
+		input.text('');
+		$('#afTags-hiddenInput').val(JSON.stringify(value));
+		templateInstance.state.set('value', value);
+		templateInstance.state.set('target', null);
+		templateInstance.state.set('showSelectOptions', true);
+
+	}
 });
