@@ -2,33 +2,33 @@
 	<div class="form-control aftags-container">
 		<div>
 			{{#each tags}}
-				{{#if isSelected @index}}
-					<span id="aftags-input" class="btn btn-default {{#unless focus}}text-muted{{/unless}}"
-						  contenteditable="true" autofocus data-index="{{@index}}">
-						{{this}}
-					</span>
-				{{else}}
-					<div class="btn-group aftags-tag-container">
-						<span class="btn {{#if isDouble this}}btn-danger{{else}}btn-info{{/if}} btn-sm aftags-tag"
+				<div class="btn-group aftags-tag-container">
+					{{#if isSelected @index}}
+						<span id="aftags-input" class="btn btn-default"
+							  contenteditable="true" autofocus data-index="{{@index}}">
+							{{this}}
+						</span>
+						<button id="aftags-input-applybutton" class="btn btn-default">&#x2714;</button>
+					{{else}}
+						<span class="btn {{#if isDouble @index}}btn-danger{{else}}btn-info{{/if}} btn-sm aftags-tag"
 							  data-index="{{@index}}">{{this}}</span>
 						<span class="btn btn-info btn-sm aftags-close" data-index="{{@index}}">&times;</span>
-					</div>
-				{{/if}}
+					{{/if}}
+				</div>
 			{{/each}}
 
 			{{#if isSelected null}}
 				<div class="btn-group aftags-tag-container">
-				<span id="aftags-input" class="btn btn-default {{#unless focus}}text-muted{{/unless}}"
-					  contenteditable="true" autofocus data-index="-1">
+				<span id="aftags-input" class="btn btn-default" contenteditable="true" autofocus data-index="-1">
 					{{#if showPlaceholder}}
 						<span class="text-muted">{{placeholder}}</span>
 					{{/if}}
 				</span>
-				{{#unless showPlaceholder}}
-					<button id="aftags-input-applybutton" class="btn btn-default">&#x2714;</button>
+					{{#unless showPlaceholder}}
+						<button id="aftags-input-applybutton" class="btn btn-default">&#x2714;</button>
 					{{else}}
-					<button id="aftags-input-showenterbutton" class="btn btn-default">&#x270E;</button>
-				{{/unless}}
+						<button id="aftags-input-showenterbutton" class="btn btn-default">&#x270E;</button>
+					{{/unless}}
 				</div>
 			{{/if}}
 		</div>

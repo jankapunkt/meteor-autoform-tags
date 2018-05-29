@@ -82,9 +82,6 @@ Template.afTags.helpers({
 	tags() {
 		return Template.instance().state.get('value');
 	},
-	focus() {
-		return Template.instance().state.get('focus');
-	},
 	onlyOptions() {
 		return Template.instance().state.get('onlyOptions');
 	},
@@ -104,14 +101,26 @@ Template.afTags.helpers({
 	placeholder() {
 		return Template.instance().state.get('placeholder');
 	},
-	isDouble(value) {
-		return Template.instance().state.get('double') === value.trim();
+	isDouble(index) {
+		const double = Template.instance().state.get('double');
+		return double > -1 && double === index;
 	}
 });
 
-function applyInput({ input, tag, index, value, templateInstance }) {
-	const isDouble = templateInstance.state.get('double') === tag;
-	if (isDouble) return;
+function getTag(text = '') {
+	return text.replace(/\s\s+/g, ' ').trim();
+}
+
+function applyInput({ templateInstance }) {
+	const input = $('#aftags-input');
+	const index = parseInt(input.attr('data-index'), 10);
+	const target = templateInstance.state.get('target');
+	const value = templateInstance.state.get('value');
+	const tag = getTag(input.text());
+
+
+	const doubleIndex = templateInstance.state.get('double');
+	if (doubleIndex > -1 && doubleIndex !== index) return;
 
 	if (tag.length === 0 || tag === "") {
 		return;
@@ -140,10 +149,6 @@ function applyInput({ input, tag, index, value, templateInstance }) {
 	input.text('');
 }
 
-function getTag(text = '') {
-	return text.replace(/\s\s+/g, ' ').trim();
-}
-
 Template.afTags.events({
 
 	'focus #aftags-input'(event, templateInstance) {
@@ -165,7 +170,8 @@ Template.afTags.events({
 			templateInstance.state.set('target', null);
 		}
 		templateInstance.state.set('showSelectOptions', false);
-		templateInstance.state.set('showPlaceholder', getTag($('#aftags-input').text()).length === 0);
+		templateInstance.state.set('showPlaceholder', input.text().length === 0);
+
 	},
 
 	'click #aftags-input-showenterbutton'(event) {
@@ -175,33 +181,26 @@ Template.afTags.events({
 
 	'click #aftags-input-applybutton'(event, templateInstance) {
 		event.preventDefault();
-
-		const input = $('#aftags-input');
-		const index = parseInt(input.attr('data-index'), 10);
-		const target = templateInstance.state.get('target');
-		const value = templateInstance.state.get('value');
-		const tag = getTag(input.text());
-
-		applyInput({ input, index, value, tag, templateInstance });
+		applyInput({ templateInstance });
 	},
 
 	'input #aftags-input'(event, templateInstance) {
 
 		// detect the current input and immediately
 		// cache it to be a double if true
-
 		const input = $(event.target);
 		const index = parseInt(input.attr('data-index'), 10);
-		const target = templateInstance.state.get('target');
 		const value = templateInstance.state.get('value');
 		const tag = getTag(input.text());
 
 
-		// index !== means we are not editing a tag
-		// which could lead a user to hit enter to imply
-		// that the 'old' value should remain thus creating a false double
-		const isDouble = index !== target && value.indexOf(tag) > -1;
-		templateInstance.state.set('double', isDouble ? tag : null);
+		// if there is a double found
+		// and it's index is not the current index
+		// which may be the case if we edit the
+		// current tag
+		const doubleIndex = value.indexOf(tag);
+		const isDouble = doubleIndex > -1 && doubleIndex !== index;
+		templateInstance.state.set('double', isDouble ? doubleIndex : -1);
 	},
 
 	'keydown #aftags-input'(event, templateInstance) {
@@ -213,9 +212,6 @@ Template.afTags.events({
 
 		const input = $(event.target);
 		const index = parseInt(input.attr('data-index'), 10);
-		const target = templateInstance.state.get('target');
-		const value = templateInstance.state.get('value');
-		const tag = getTag(input.text());
 
 		event.preventDefault();
 		event.stopPropagation();
@@ -223,19 +219,18 @@ Template.afTags.events({
 
 		// ESC -> cancel
 		if (event.key === "Escape") {
+			templateInstance.state.set('target', null);
+			templateInstance.state.set('double', -1);
 
 			if (index === -1) {
 				input.text('');
 			}
-			templateInstance.state.set('target', null);
-			templateInstance.state.set('showPlaceholder', true);
-			templateInstance.state.set('double', null);
+
 			input.blur();
 			return;
 		}
 
-
-		applyInput({ input, index, value, tag, templateInstance });
+		applyInput({ templateInstance });
 	},
 
 	'click .aftags-close'(event, templateInstance) {
@@ -244,10 +239,16 @@ Template.afTags.events({
 		//delete tag
 
 		const input = $(event.currentTarget);
-
+		const doubleIndex = templateInstance.state.get('double');
 		const index = parseInt(input.attr('data-index'), 10);
-		const value = templateInstance.state.get('value');
 
+		// if item to delete
+		// is stored in double's cache
+		if (doubleIndex === index) {
+			templateInstance.state.set('double', -1);
+		}
+
+		const value = templateInstance.state.get('value');
 		value.splice(index, 1);
 
 		$('#afTags-hiddenInput').val(JSON.stringify(value));
