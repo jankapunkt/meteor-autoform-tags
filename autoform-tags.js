@@ -117,6 +117,9 @@ Template.afTags.helpers({
 		const len = Template.instance().state.get('maxLength');
 		return len > -1 ? len : null;
 	},
+	limitsExceeded(){
+		return Template.instance().state.get('limitsExceeded')
+	},
 });
 
 function getTag(text = '') {
@@ -140,13 +143,13 @@ function applyInput({ templateInstance }) {
 
 	const minLength = templateInstance.state.get('minLength');
 	if (minLength > -1 && tag.length < minLength) {
-		// TODO show err msg
+		templateInstance.state.set('limitsExceeded', true);
 		return;
 	}
 
 	const maxLength = templateInstance.state.get('maxLength');
 	if (maxLength > -1 && tag.length > maxLength) {
-		// TODO show err msg
+		templateInstance.state.set('limitsExceeded', true);
 		return;
 	}
 
@@ -222,6 +225,21 @@ Template.afTags.events({
 		const tag = getTag(input.text());
 		const index = parseInt(input.attr('data-index'), 10);
 		const value = templateInstance.state.get('value');
+
+
+		const minLength = templateInstance.state.get('minLength');
+		if (minLength > -1 && tag.length < minLength) {
+			templateInstance.state.set('limitsExceeded', true);
+			return;
+		}
+
+		const maxLength = templateInstance.state.get('maxLength');
+		if (maxLength > -1 && tag.length > maxLength) {
+			templateInstance.state.set('limitsExceeded', true);
+			return;
+		}
+
+		templateInstance.state.set('limitsExceeded', false);
 
 		// if there is a double found
 		// and it's index is not the current index

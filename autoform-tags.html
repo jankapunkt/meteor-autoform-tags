@@ -1,7 +1,7 @@
 <template name="afTags">
 	<span class="pull-right">
 		{{#if hasLimits}}
-			<span class="text-info">
+			<span class="aftags-range {{#if limitsExceeded}}btn-warning{{else}}text-info{{/if}}">
 				{{#with minLength}}{{this}} &lt; {{/with}}&#x270E;{{#with maxLength}} &lt; {{this}}{{/with}}
 			</span>
 		{{/if}}
@@ -17,7 +17,7 @@
 						</span>
 						<button id="aftags-input-applybutton" class="btn btn-default">&#x2714;</button>
 					{{else}}
-						<span class="btn {{#if isDouble @index}}btn-danger{{else}}btn-info{{/if}} btn-sm aftags-tag"
+						<span class="btn {{#if isDouble @index}}btn-warning{{else}}btn-info{{/if}} btn-sm aftags-tag"
 							  data-index="{{@index}}">{{this}}</span>
 						<span class="btn btn-info btn-sm aftags-close" data-index="{{@index}}">&times;</span>
 					{{/if}}
@@ -25,9 +25,10 @@
 			{{/each}}
 
 			{{#if isSelected null}}
-				<div class="btn-group aftags-tag-container">
+				<div class="btn-group {{#if limitsExceeded}}btn-warning{{/if}} aftags-tag-container">
 
-				<span id="aftags-input" class="btn btn-default" contenteditable="true" autofocus data-index="-1">
+				<span id="aftags-input" class="btn btn-default"
+					  contenteditable="true" autofocus data-index="-1">
 					{{#if showPlaceholder}}
 						<span class="text-muted">{{placeholder}}</span>
 					{{/if}}
