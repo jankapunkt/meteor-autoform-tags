@@ -114,7 +114,6 @@ function applyInput({ input, tag, index, value, templateInstance }) {
 	if (isDouble) return;
 
 	if (tag.length === 0 || tag === "") {
-		//TODO show err msg
 		return;
 	}
 
@@ -123,7 +122,6 @@ function applyInput({ input, tag, index, value, templateInstance }) {
 
 	if (onlyOptions && optionsMap && !optionsMap[tag]) {
 		// TODO show err msg
-		console.log("tag not allowed")
 		return;
 	}
 
@@ -142,11 +140,14 @@ function applyInput({ input, tag, index, value, templateInstance }) {
 	input.text('');
 }
 
+function getTag(text = '') {
+	return text.replace(/\s\s+/g, ' ').trim();
+}
+
 Template.afTags.events({
 
 	'focus #aftags-input'(event, templateInstance) {
 		event.preventDefault();
-		console.log("focus #aftags-input");
 		templateInstance.state.set('showSelectOptions', true);
 		templateInstance.state.set('showPlaceholder', false);
 	},
@@ -164,7 +165,12 @@ Template.afTags.events({
 			templateInstance.state.set('target', null);
 		}
 		templateInstance.state.set('showSelectOptions', false);
-		templateInstance.state.set('showPlaceholder', $('#aftags-input').text().trim().length === 0);
+		templateInstance.state.set('showPlaceholder', getTag($('#aftags-input').text()).length === 0);
+	},
+
+	'click #aftags-input-showenterbutton'(event) {
+		event.preventDefault();
+		$('#aftags-input').focus();
 	},
 
 	'click #aftags-input-applybutton'(event, templateInstance) {
@@ -174,7 +180,7 @@ Template.afTags.events({
 		const index = parseInt(input.attr('data-index'), 10);
 		const target = templateInstance.state.get('target');
 		const value = templateInstance.state.get('value');
-		const tag = input.text().trim();
+		const tag = getTag(input.text());
 
 		applyInput({ input, index, value, tag, templateInstance });
 	},
@@ -188,7 +194,7 @@ Template.afTags.events({
 		const index = parseInt(input.attr('data-index'), 10);
 		const target = templateInstance.state.get('target');
 		const value = templateInstance.state.get('value');
-		const tag = input.text().trim();
+		const tag = getTag(input.text());
 
 
 		// index !== means we are not editing a tag
@@ -209,7 +215,7 @@ Template.afTags.events({
 		const index = parseInt(input.attr('data-index'), 10);
 		const target = templateInstance.state.get('target');
 		const value = templateInstance.state.get('value');
-		const tag = input.text().trim();
+		const tag = getTag(input.text());
 
 		event.preventDefault();
 		event.stopPropagation();
@@ -235,7 +241,6 @@ Template.afTags.events({
 	'click .aftags-close'(event, templateInstance) {
 		event.preventDefault();
 		event.stopPropagation();
-		console.log("click .aftags-close");
 		//delete tag
 
 		const input = $(event.currentTarget);
@@ -256,7 +261,6 @@ Template.afTags.events({
 	'click .aftags-tag'(event, templateInstance) {
 		event.preventDefault();
 		event.stopPropagation();
-		console.log("click .aftags-tag");
 
 		//edit tag
 		const index = $(event.currentTarget).attr('data-index');
@@ -272,7 +276,6 @@ Template.afTags.events({
 	'mousedown .aftags-option'(event, templateInstance) {
 		event.preventDefault();
 		event.stopPropagation();
-		console.log("click .aftags-option");
 
 		const input = $(event.currentTarget);
 		const target = input.attr('data-target');
