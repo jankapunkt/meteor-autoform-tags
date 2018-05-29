@@ -36,6 +36,7 @@ Template.afTags.onCreated(function () {
 	instance.state.set('value', []);
 	instance.state.set('double', null);
 	instance.state.set('showPlaceholder', true);
+
 	instance.autorun(function () {
 
 		const { data } = instance;
@@ -51,8 +52,8 @@ Template.afTags.onCreated(function () {
 			});
 		}
 
-		instance.state.set('minLength', atts.min || null);
-		instance.state.set('maxLength', atts.max || null);
+		instance.state.set('minLength', atts.min || -1);
+		instance.state.set('maxLength', atts.max || -1);
 		instance.state.set('selectOptions', data.selectOptions);
 		instance.state.set('optionsMap', optionsMap);
 		instance.state.set('placeholder', atts.placeholder || '...');
@@ -104,7 +105,18 @@ Template.afTags.helpers({
 	isDouble(index) {
 		const double = Template.instance().state.get('double');
 		return double > -1 && double === index;
-	}
+	},
+	hasLimits() {
+		return Template.instance().state.get('minLength') > -1 || Template.instance().state.get('maxLength') > -1
+	},
+	minLength() {
+		const len = Template.instance().state.get('minLength');
+		return len > -1 ? len : null;
+	},
+	maxLength() {
+		const len = Template.instance().state.get('maxLength');
+		return len > -1 ? len : null;
+	},
 });
 
 function getTag(text = '') {
@@ -123,6 +135,18 @@ function applyInput({ templateInstance }) {
 	if (doubleIndex > -1 && doubleIndex !== index) return;
 
 	if (tag.length === 0 || tag === "") {
+		return;
+	}
+
+	const minLength = templateInstance.state.get('minLength');
+	if (minLength > -1 && tag.length < minLength) {
+		// TODO show err msg
+		return;
+	}
+
+	const maxLength = templateInstance.state.get('maxLength');
+	if (maxLength > -1 && tag.length > maxLength) {
+		// TODO show err msg
 		return;
 	}
 
@@ -147,6 +171,10 @@ function applyInput({ templateInstance }) {
 	templateInstance.state.set('value', value);
 	templateInstance.state.set('target', null);
 	input.text('');
+
+	setTimeout(() => {
+		$('#aftags-input').focus();
+	}, 30);
 }
 
 Template.afTags.events({
@@ -169,8 +197,9 @@ Template.afTags.events({
 		if (index === target) {
 			templateInstance.state.set('target', null);
 		}
-		templateInstance.state.set('showSelectOptions', false);
-		templateInstance.state.set('showPlaceholder', input.text().length === 0);
+		const tagLength = input.text().length;
+		templateInstance.state.set('showSelectOptions', tagLength !== 0);
+		templateInstance.state.set('showPlaceholder', tagLength === 0);
 
 	},
 
@@ -186,13 +215,13 @@ Template.afTags.events({
 
 	'input #aftags-input'(event, templateInstance) {
 
+
 		// detect the current input and immediately
 		// cache it to be a double if true
 		const input = $(event.target);
+		const tag = getTag(input.text());
 		const index = parseInt(input.attr('data-index'), 10);
 		const value = templateInstance.state.get('value');
-		const tag = getTag(input.text());
-
 
 		// if there is a double found
 		// and it's index is not the current index
@@ -256,7 +285,7 @@ Template.afTags.events({
 
 		setTimeout(() => {
 			$('#aftags-input').focus();
-		}, 150);
+		}, 30);
 	},
 
 	'click .aftags-tag'(event, templateInstance) {
@@ -271,7 +300,7 @@ Template.afTags.events({
 
 		setTimeout(() => {
 			$('#aftags-input').focus();
-		}, 150);
+		}, 30);
 	},
 
 	'mousedown .aftags-option'(event, templateInstance) {

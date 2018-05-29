@@ -1,4 +1,11 @@
 <template name="afTags">
+	<span class="pull-right">
+		{{#if hasLimits}}
+			<span class="text-info">
+				{{#with minLength}}{{this}} &lt; {{/with}}&#x270E;{{#with maxLength}} &lt; {{this}}{{/with}}
+			</span>
+		{{/if}}
+	</span>
 	<div class="form-control aftags-container">
 		<div>
 			{{#each tags}}
@@ -19,6 +26,7 @@
 
 			{{#if isSelected null}}
 				<div class="btn-group aftags-tag-container">
+
 				<span id="aftags-input" class="btn btn-default" contenteditable="true" autofocus data-index="-1">
 					{{#if showPlaceholder}}
 						<span class="text-muted">{{placeholder}}</span>
