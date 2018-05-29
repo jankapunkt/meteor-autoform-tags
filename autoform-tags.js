@@ -34,6 +34,7 @@ Template.afTags.onCreated(function () {
 	instance.state = new ReactiveDict();
 	instance.state.set('target', null);
 	instance.state.set('value', []);
+	instance.state.set('double', null);
 	instance.state.set('showPlaceholder', true);
 	instance.autorun(function () {
 
@@ -52,12 +53,12 @@ Template.afTags.onCreated(function () {
 
 		instance.state.set('selectOptions', data.selectOptions);
 		instance.state.set('optionsMap', optionsMap);
-		instance.state.set('placeholder', atts.placeholder);
+		instance.state.set('placeholder', atts.placeholder || '...');
 		instance.state.set('onlyOptions', !!atts.onlyOptions);
 		instance.state.set('dataSchemaKey', atts['data-schema-key']);
 
 		const { value } = data;
-		if (value && !nstance.state.get('value')) {
+		if (value && !instance.state.get('value')) {
 			$('#afTags-hiddenInput').val(JSON.stringify(value));
 			instance.state.set('value', value);
 		}
@@ -132,29 +133,42 @@ Template.afTags.events({
 		templateInstance.state.set('showPlaceholder', $('#aftags-input').text().trim().length === 0);
 	},
 
-	'keydown #aftags-input'(event, templateInstance) {
-		console.log("keydown #aftags-input");
+	'input #aftags-input'(event, templateInstance) {
 
-		const input = $(event.currentTarget);
+		// detect the current input and immediately
+		// cache it to be a double if true
+
+		const input = $(event.target);
 		const index = parseInt(input.attr('data-index'), 10);
 		const target = templateInstance.state.get('target');
 		const value = templateInstance.state.get('value');
 		const tag = input.text().trim();
+
 
 		// index !== means we are not editing a tag
 		// which could lead a user to hit enter to imply
 		// that the 'old' value should remain thus creating a false double
 		const isDouble = index !== target && value.indexOf(tag) > -1;
 		templateInstance.state.set('double', isDouble ? tag : null);
+	},
 
-		// if typing...
-		if (event.keyCode !== 13 && event.keyCode !== 27) {
+	'keydown #aftags-input'(event, templateInstance) {
+
+		// if typing... return
+		if (event.key !== "Enter" && event.keyCode !== "Escape" && event.key !== "Tab") {
 			return;
 		}
+
+		const input = $(event.target);
+		const index = parseInt(input.attr('data-index'), 10);
+		const target = templateInstance.state.get('target');
+		const value = templateInstance.state.get('value');
+		const tag = input.text().trim();
 
 		event.preventDefault();
 		event.stopPropagation();
 
+		const isDouble = templateInstance.state.get('double') === tag;
 		if (isDouble) return;
 
 		// ESC -> cancel
