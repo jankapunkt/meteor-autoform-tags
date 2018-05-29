@@ -17,12 +17,19 @@
 			{{/each}}
 
 			{{#if isSelected null}}
+				<div class="btn-group aftags-tag-container">
 				<span id="aftags-input" class="btn btn-default {{#unless focus}}text-muted{{/unless}}"
 					  contenteditable="true" autofocus data-index="-1">
 					{{#if showPlaceholder}}
 						<span class="text-muted">{{placeholder}}</span>
 					{{/if}}
 				</span>
+				{{#unless showPlaceholder}}
+					<button id="aftags-input-applybutton" class="btn btn-default">&#x2714;</button>
+					{{else}}
+					<button id="aftags-input-showenterbutton" class="btn btn-default">&#x270E;</button>
+				{{/unless}}
+				</div>
 			{{/if}}
 		</div>
 

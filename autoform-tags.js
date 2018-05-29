@@ -51,6 +51,8 @@ Template.afTags.onCreated(function () {
 			});
 		}
 
+		instance.state.set('minLength', atts.min || null);
+		instance.state.set('maxLength', atts.max || null);
 		instance.state.set('selectOptions', data.selectOptions);
 		instance.state.set('optionsMap', optionsMap);
 		instance.state.set('placeholder', atts.placeholder || '...');
@@ -107,6 +109,38 @@ Template.afTags.helpers({
 	}
 });
 
+function applyInput({ input, tag, index, value, templateInstance }) {
+	const isDouble = templateInstance.state.get('double') === tag;
+	if (isDouble) return;
+
+	if (tag.length === 0 || tag === "") {
+		//TODO show err msg
+		return;
+	}
+
+	const onlyOptions = templateInstance.state.get('onlyOptions');
+	const optionsMap = templateInstance.state.get('optionsMap');
+
+	if (onlyOptions && optionsMap && !optionsMap[tag]) {
+		// TODO show err msg
+		console.log("tag not allowed")
+		return;
+	}
+
+
+	if (index === -1) {
+		value.push(tag);
+	} else if (index === target) {
+		value[index] = tag;
+	} else {
+		value.splice(index, 0, tag);
+	}
+
+	$('#afTags-hiddenInput').val(JSON.stringify(value));
+	templateInstance.state.set('value', value);
+	templateInstance.state.set('target', null);
+	input.text('');
+}
 
 Template.afTags.events({
 
@@ -120,7 +154,7 @@ Template.afTags.events({
 	'blur #aftags-input'(event, templateInstance) {
 		//event.preventDefault();
 		//event.stopPropagation();
-		console.log("blur #aftags-input");
+
 
 		// cancel on blur
 		const input = $(event.currentTarget);
@@ -131,6 +165,18 @@ Template.afTags.events({
 		}
 		templateInstance.state.set('showSelectOptions', false);
 		templateInstance.state.set('showPlaceholder', $('#aftags-input').text().trim().length === 0);
+	},
+
+	'click #aftags-input-applybutton'(event, templateInstance) {
+		event.preventDefault();
+
+		const input = $('#aftags-input');
+		const index = parseInt(input.attr('data-index'), 10);
+		const target = templateInstance.state.get('target');
+		const value = templateInstance.state.get('value');
+		const tag = input.text().trim();
+
+		applyInput({ input, index, value, tag, templateInstance });
 	},
 
 	'input #aftags-input'(event, templateInstance) {
@@ -155,7 +201,7 @@ Template.afTags.events({
 	'keydown #aftags-input'(event, templateInstance) {
 
 		// if typing... return
-		if (event.key !== "Enter" && event.keyCode !== "Escape" && event.key !== "Tab") {
+		if (event.key !== "Enter" && event.key !== "Escape" && event.key !== "Tab") {
 			return;
 		}
 
@@ -168,11 +214,9 @@ Template.afTags.events({
 		event.preventDefault();
 		event.stopPropagation();
 
-		const isDouble = templateInstance.state.get('double') === tag;
-		if (isDouble) return;
 
 		// ESC -> cancel
-		if (event.keyCode === 27) {
+		if (event.key === "Escape") {
 
 			if (index === -1) {
 				input.text('');
@@ -185,34 +229,7 @@ Template.afTags.events({
 		}
 
 
-		if (tag.length === 0 || tag === "") {
-			//TODO show err msg
-			return;
-		}
-
-
-		const onlyOptions = templateInstance.state.get('onlyOptions');
-		const optionsMap = templateInstance.state.get('optionsMap');
-
-		if (onlyOptions && optionsMap && !optionsMap[tag]) {
-			// TODO show err msg
-			console.log("tag not allowed")
-			return;
-		}
-
-
-		if (index === -1) {
-			value.push(tag);
-		} else if (index === target) {
-			value[index] = tag;
-		} else {
-			value.splice(index, 0, tag);
-		}
-
-		$('#afTags-hiddenInput').val(JSON.stringify(value));
-		templateInstance.state.set('value', value);
-		templateInstance.state.set('target', null);
-		input.text('');
+		applyInput({ input, index, value, tag, templateInstance });
 	},
 
 	'click .aftags-close'(event, templateInstance) {
