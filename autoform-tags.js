@@ -61,7 +61,7 @@ Template.afTags.onCreated(function () {
 		instance.state.set('dataSchemaKey', atts['data-schema-key']);
 
 		const { value } = data;
-		if (value && !instance.state.get('value')) {
+		if (value && instance.state.get('value').length === 0) {
 			$('#afTags-hiddenInput').val(JSON.stringify(value));
 			instance.state.set('value', value);
 		}
