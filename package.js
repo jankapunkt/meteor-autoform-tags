@@ -1,6 +1,6 @@
 Package.describe({
   name: 'jkuester:autoform-tags',
-  version: '0.1.1',
+  version: '0.2.0',
   // Brief, one-line summary of the package.
   summary: 'Provides a form field to enter tags.',
   // URL to the Git repository containing the source code for this package.
@@ -17,7 +17,7 @@ Package.onUse(function(api) {
 	  'ecmascript',
 	  'reactive-dict',
 	  'templating@1.3.2',
-	  'aldeed:autoform@6.2.0',
+	  'aldeed:autoform@6.0.0',
 	'aldeed:template-extension@4.0.0'
 	]);
 
