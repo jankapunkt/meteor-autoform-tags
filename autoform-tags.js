@@ -29,7 +29,7 @@ Template.afTags.onCreated(function () {
   instance.state.set('showSelectOptions', true)
 
   instance.state.set('dataSchemaKey', instance.data.atts[ 'data-schema-key' ])
-  
+
   const { value } = instance.data
   if (value && instance.state.get('value').length === 0) {
     $('#afTags-hiddenInput').val(JSON.stringify(value))
@@ -203,6 +203,7 @@ Template.afTags.events({
     const $input = $(event.currentTarget)
     const input = $input.get(0)
     const length = $input.text().trim().length
+
     if (length > 0) {
       try {
         const isCurrent = input.childNodes.length === 1
@@ -217,6 +218,8 @@ Template.afTags.events({
         console.error(e)
       }
     }
+
+    templateInstance.state.set('currentLength', length)
   },
 
   'blur #aftags-input' (event, templateInstance) {
