@@ -30,9 +30,9 @@
 			{{/each}}
 
 			{{#if isSelected null}}
-				<div class="btn-group {{#if limitsExceeded}}btn-warning{{/if}} aftags-tag-container">
+				<div class="btn-group aftags-tag-container" role="group">
 
-				<span id="aftags-input" class="btn btn-outline-secondary"
+				<span id="aftags-input" class="btn btn-outline-{{#if limitsExceeded}}warning{{else}}secondary{{/if}}"
 					  contenteditable="true" autofocus data-index="-1">
 					{{#if showPlaceholder}}
 						<span>{{placeholder}}</span>
