@@ -1,13 +1,13 @@
 <template name="afTags">
 	<span class="pull-right">
 		{{#if showCharLimits}}
-			<span class="aftags-range {{#if limitsExceeded}}text-warning{{else}}text-muted{{/if}}">
-				{{#with minLength}}{{this}} &lt; {{/with}}&#x270E;{{#with maxLength}} &lt; {{this}}{{/with}}
+			<span class="aftags-range  {{#if limitsExceeded}}text-warning{{else}}text-muted{{/if}}">
+				{{#with minLength}}{{this}} &lt; {{/with}}&#x270E;{{currentLenth}}{{#with maxLength}} &lt; {{this}}{{/with}}
 			</span>
 		{{/if}}
         {{#if showTagLimits}}
             <span class="aftags-range text-muted">
-				{{#with min}}{{this}} &lt; {{/with}} # {{#with max}} &lt; {{this}}{{/with}}
+				{{#with min}}{{this}} &lt; {{/with}} #{{currentTags}} {{#with max}} &lt; {{this}}{{/with}}
 			</span>
         {{/if}}
 	</span>
