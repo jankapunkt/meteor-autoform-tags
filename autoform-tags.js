@@ -26,6 +26,8 @@ Template.afTags.onCreated(function () {
   instance.state.set('value', [])
   instance.state.set('double', null)
   instance.state.set('editMode', false)
+  instance.state.set('showSelectOptions', true)
+
 
   instance.autorun(function () {
     const data = Template.currentData()
@@ -230,7 +232,6 @@ Template.afTags.events({
     }
     const tagLength = input.text().trim().length
     if (tagLength === 0 || index > -1) {
-      templateInstance.state.set('showSelectOptions', false)
       templateInstance.state.set('editMode', false)
       templateInstance.state.set('currentLength', 0)
       templateInstance.state.set('target', null)
@@ -240,7 +241,6 @@ Template.afTags.events({
 
   'click #aftags-input-add-tag-button' (event, templateInstance) {
     event.preventDefault()
-    templateInstance.state.set('showSelectOptions', true)
     templateInstance.state.set('editMode', true)
   },
 
@@ -343,7 +343,6 @@ Template.afTags.events({
     // edit tag
     const index = $(event.currentTarget).attr('data-index')
     templateInstance.state.set('target', parseInt(index, 10))
-    templateInstance.state.set('showSelectOptions', true)
     templateInstance.state.set('editMode', true)
 
     setTimeout(() => {
@@ -365,6 +364,5 @@ Template.afTags.events({
     $('#afTags-hiddenInput').val(JSON.stringify(value))
     templateInstance.state.set('value', value)
     templateInstance.state.set('target', null)
-    templateInstance.state.set('showSelectOptions', true)
   }
 })

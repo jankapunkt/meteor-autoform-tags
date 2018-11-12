@@ -2,20 +2,9 @@
 	cursor : pointer;
 }
 
-
-.aftags-tag {
-
-}
-
-
-.aftags-container {
-	display : table !important;
-}
-
-
-.aftags-options {
-	overflow-y                 : scroll;
-	-webkit-overflow-scrolling : touch;
+.aftags-option {
+    margin-top: 0.4rem;
+    margin-bottom: 0.4rem;
 }
 
 

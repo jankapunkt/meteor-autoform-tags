@@ -11,8 +11,8 @@
 			</span>
         {{/if}}
 	</span>
-	<div class="form-control aftags-container">
-		<div>
+	<div class="card aftags-container">
+		<div class="card-body">
 			{{#each tags}}
 				<div class="btn-group aftags-tag-container" role="group">
 					{{#if isSelected @index}}
@@ -51,15 +51,14 @@
 		</div>
 
 		{{#if showSelectOptions}}
-			<hr>
-			<div class="aftags-options">
+			<div class="card-footer aftags-options">
 				{{#each selectOptions}}
 					{{#unless selected this}}
 						<button class="btn btn-sm btn-secondary aftags-tag aftags-option" data-target="{{this}}">
 							{{this}}
 						</button>
 					{{else}}
-						<button class="btn btn-sm btn-secondary disabled" disabled>
+						<button class="btn btn-sm btn-secondary disabled aftags-option" disabled>
 							{{this}}
 						</button>
 					{{/unless}}
