@@ -1,7 +1,7 @@
 <template name="afTags">
 	<span class="pull-right">
 		{{#if hasLimits}}
-			<span class="aftags-range {{#if limitsExceeded}}btn-warning{{else}}text-info{{/if}}">
+			<span class="aftags-range {{#if limitsExceeded}}text-warning{{else}}text-muted{{/if}}">
 				{{#with minLength}}{{this}} &lt; {{/with}}&#x270E;{{#with maxLength}} &lt; {{this}}{{/with}}
 			</span>
 		{{/if}}
