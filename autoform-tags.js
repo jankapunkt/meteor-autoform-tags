@@ -229,7 +229,7 @@ Template.afTags.events({
       templateInstance.state.set('target', null)
     }
     const tagLength = input.text().trim().length
-    if (tagLength === 0) {
+    if (tagLength === 0 || index > -1) {
       templateInstance.state.set('showSelectOptions', false)
       templateInstance.state.set('editMode', false)
       templateInstance.state.set('currentLength', 0)
