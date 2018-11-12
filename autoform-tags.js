@@ -28,6 +28,13 @@ Template.afTags.onCreated(function () {
   instance.state.set('editMode', false)
   instance.state.set('showSelectOptions', true)
 
+  instance.state.set('dataSchemaKey', instance.data.atts[ 'data-schema-key' ])
+  
+  const { value } = instance.data
+  if (value && instance.state.get('value').length === 0) {
+    $('#afTags-hiddenInput').val(JSON.stringify(value))
+    instance.state.set('value', value)
+  }
 
   instance.autorun(function () {
     const data = Template.currentData()
@@ -50,13 +57,6 @@ Template.afTags.onCreated(function () {
     instance.state.set('optionsMap', optionsMap)
     instance.state.set('placeholder', atts.placeholder)
     instance.state.set('onlyOptions', !!atts.onlyOptions)
-    instance.state.set('dataSchemaKey', atts[ 'data-schema-key' ])
-
-    const { value } = data
-    if (value && instance.state.get('value').length === 0) {
-      $('#afTags-hiddenInput').val(JSON.stringify(value))
-      instance.state.set('value', value)
-    }
 
     const editMode = instance.state.get('editMode')
     if (editMode) {
