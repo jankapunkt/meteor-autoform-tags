@@ -25,7 +25,7 @@ Template.afTags.onCreated(function () {
   instance.state.set('target', null)
   instance.state.set('value', [])
   instance.state.set('double', null)
-  instance.state.set('showPlaceholder', true)
+  instance.state.set('editMode', false)
 
   instance.autorun(function () {
     const data = Template.currentData()
@@ -46,7 +46,7 @@ Template.afTags.onCreated(function () {
     instance.state.set('maxLength', atts.max || -1)
     instance.state.set('selectOptions', data.selectOptions)
     instance.state.set('optionsMap', optionsMap)
-    instance.state.set('placeholder', atts.placeholder || '...')
+    instance.state.set('placeholder', atts.placeholder)
     instance.state.set('onlyOptions', !!atts.onlyOptions)
     instance.state.set('dataSchemaKey', atts['data-schema-key'])
 
@@ -54,6 +54,11 @@ Template.afTags.onCreated(function () {
     if (value && instance.state.get('value').length === 0) {
       $('#afTags-hiddenInput').val(JSON.stringify(value))
       instance.state.set('value', value)
+    }
+
+    const editMode = instance.state.get('editMode')
+    if (editMode) {
+      setTimeout(() => $('#aftags-input').focus(), 50)
     }
 
     instance.state.set('loadComplete', true)
@@ -86,8 +91,8 @@ Template.afTags.helpers({
     const value = Template.instance().state.get('value')
     return value && value.indexOf(tag) > -1
   },
-  showPlaceholder () {
-    return Template.instance().state.get('placeholder') && Template.instance().state.get('showPlaceholder')
+  editMode () {
+    return Template.instance().state.get('editMode')
   },
   placeholder () {
     return Template.instance().state.get('placeholder')
@@ -98,12 +103,12 @@ Template.afTags.helpers({
   },
   showTagLimits () {
     const instance = Template.instance()
-    return instance.state.get('showPlaceholder') &&
+    return !instance.state.get('editMode') &&
       (instance.state.get('min') > -1 || instance.state.get('max') > -1)
   },
   showCharLimits () {
     const instance = Template.instance()
-    return !instance.state.get('showPlaceholder') &&
+    return instance.state.get('editMode') &&
     (instance.state.get('minLength') > -1 || instance.state.get('maxLength') > -1)
   },
   min () {
@@ -124,6 +129,13 @@ Template.afTags.helpers({
   },
   limitsExceeded () {
     return Template.instance().state.get('limitsExceeded')
+  },
+  currentLenth () {
+    return Template.instance().state.get('currentLength') || 0
+  },
+  currentTags () {
+    const value = Template.instance().state.get('value')
+    return (value && value.length) || 0
   }
 })
 
@@ -185,12 +197,6 @@ function applyInput ({templateInstance}) {
 
 Template.afTags.events({
 
-  'focus #aftags-input' (event, templateInstance) {
-    event.preventDefault()
-    templateInstance.state.set('showSelectOptions', true)
-    templateInstance.state.set('showPlaceholder', false)
-  },
-
   'blur #aftags-input' (event, templateInstance) {
     // event.preventDefault();
     // event.stopPropagation();
@@ -202,14 +208,20 @@ Template.afTags.events({
     if (index === target) {
       templateInstance.state.set('target', null)
     }
-    const tagLength = input.text().length
-    templateInstance.state.set('showSelectOptions', tagLength !== 0)
-    templateInstance.state.set('showPlaceholder', tagLength === 0)
+    const tagLength = input.text().trim().length
+    if (tagLength === 0) {
+      templateInstance.state.set('showSelectOptions', false)
+      templateInstance.state.set('editMode', false)
+      templateInstance.state.set('currentLength', 0)
+      templateInstance.state.set('target', null)
+      templateInstance.state.set('double', -1)
+    }
   },
 
-  'click #aftags-input-showenterbutton' (event) {
+  'click #aftags-input-add-tag-button' (event, templateInstance) {
     event.preventDefault()
-    $('#aftags-input').focus()
+    templateInstance.state.set('showSelectOptions', true)
+    templateInstance.state.set('editMode', true)
   },
 
   'click #aftags-input-applybutton' (event, templateInstance) {
@@ -224,6 +236,8 @@ Template.afTags.events({
     const tag = getTag(input.text())
     const index = parseInt(input.attr('data-index'), 10)
     const value = templateInstance.state.get('value')
+
+    templateInstance.state.set('currentLength', tag.length)
 
     const minLength = templateInstance.state.get('minLength')
     if (minLength > -1 && tag.length < minLength) {
@@ -310,7 +324,7 @@ Template.afTags.events({
     const index = $(event.currentTarget).attr('data-index')
     templateInstance.state.set('target', parseInt(index, 10))
     templateInstance.state.set('showSelectOptions', true)
-    templateInstance.state.set('showPlaceholder', false)
+    templateInstance.state.set('editMode', true)
 
     setTimeout(() => {
       $('#aftags-input').focus()

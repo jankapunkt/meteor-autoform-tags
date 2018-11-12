@@ -31,18 +31,17 @@
 
 			{{#if isSelected null}}
 				<div class="btn-group aftags-tag-container" role="group">
-
-				<span id="aftags-input" class="btn btn-outline-{{#if limitsExceeded}}warning{{else}}secondary{{/if}}"
-					  contenteditable="true" autofocus data-index="-1">
-					{{#if showPlaceholder}}
-						<span>{{placeholder}}</span>
-					{{/if}}
-				</span>
-					{{#unless showPlaceholder}}
+					{{#if editMode}}
+                        <span id="aftags-input" class="btn btn-outline-{{#if limitsExceeded}}warning{{else}}secondary{{/if}}"
+                              contenteditable="true" autofocus data-index="-1">
+                        </span>
 						<button id="aftags-input-applybutton" class="btn btn-secondary">&#x2714;</button>
 					{{else}}
-						<button id="aftags-input-showenterbutton" class="btn btn-secondary">+</button>
-					{{/unless}}
+						<button id="aftags-input-add-tag-button" class="btn btn-sm btn-success">
+                            <strong>+</strong>
+                            <span>{{placeholder}}</span>
+                        </button>
+					{{/if}}
 				</div>
 			{{/if}}
 		</div>
