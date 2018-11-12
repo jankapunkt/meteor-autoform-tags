@@ -14,7 +14,7 @@
 	<div class="form-control aftags-container">
 		<div>
 			{{#each tags}}
-				<div class="btn-group aftags-tag-container">
+				<div class="btn-group aftags-tag-container" role="group">
 					{{#if isSelected @index}}
 						<span id="aftags-input" class="btn btn-outline-secondary"
 							  contenteditable="true" autofocus data-index="{{@index}}">
@@ -22,9 +22,14 @@
 						</span>
 						<button id="aftags-input-applybutton" class="btn btn-secondary">&#x2714;</button>
 					{{else}}
-						<span class="btn {{#if isDouble @index}}btn-warning{{else}}btn-outline-secondary{{/if}} btn-sm aftags-tag"
-							  data-index="{{@index}}">{{this}}</span>
-						<span class="btn btn-secondary btn-sm aftags-close" data-index="{{@index}}">&times;</span>
+						<button class="btn {{#if isDouble @index}}btn-warning{{else}}btn-outline-secondary{{/if}} btn-sm aftags-tag"
+                                disabled="{{#if editMode}}disabled{{/if}}"
+							  data-index="{{@index}}">{{this}}</button>
+						<button class="btn btn-sm btn-secondary btn-sm aftags-close"
+                              disabled="{{#if editMode}}disabled{{/if}}"
+                              data-index="{{@index}}">
+                            &times;
+                        </button>
 					{{/if}}
 				</div>
 			{{/each}}
