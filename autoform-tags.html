@@ -11,7 +11,7 @@
 			{{#each tags}}
 				<div class="btn-group aftags-tag-container">
 					{{#if isSelected @index}}
-						<span id="aftags-input" class="btn btn-secondary"
+						<span id="aftags-input" class="btn btn-outline-secondary"
 							  contenteditable="true" autofocus data-index="{{@index}}">
 							{{this}}
 						</span>
@@ -27,7 +27,7 @@
 			{{#if isSelected null}}
 				<div class="btn-group {{#if limitsExceeded}}btn-warning{{/if}} aftags-tag-container">
 
-				<span id="aftags-input" class="btn btn-secondary"
+				<span id="aftags-input" class="btn btn-outline-secondary"
 					  contenteditable="true" autofocus data-index="-1">
 					{{#if showPlaceholder}}
 						<span>{{placeholder}}</span>
