@@ -203,7 +203,8 @@ Template.afTags.events({
     const length = $input.text().trim().length
     if (length > 0) {
       try {
-        const start = input.childNodes[ 1 ]
+        const isCurrent = input.childNodes.length === 1
+        const start = input.childNodes[ isCurrent ? 0 : 1 ]
         const range = document.createRange()
         range.setStart(start, length)
         range.setEnd(start, length)
