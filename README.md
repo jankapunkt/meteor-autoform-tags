@@ -1,18 +1,31 @@
-# meteor-autoform-tags
+# meteor-autoform-tags (Bootstrap 4)
 AutoForm add-on, that provides an interactive tag input.
+Optimized for Bootstrap 4. See installation for getting a BS4 theme for your AutoForm.
 
 ### Example Project
 
 You can check out the latest published state of this package using [this example project](https://github.com/jankapunkt/meteor-autoform-tags-examples).
 
+### Changelog
+
+**1.0**
+
+* Moved to Bootstrap 4 theme, use 'card' as base for template
+* Range display default text is 'text-muted'
+* Display min/max range of tags when no tag is edited (and minCount/maxCount values are set via schema)
+* Display min/max range of characters if tag is edited (and min/max values are set via schema)
+* Cancel edit when hitting ESC or clicking outside of tag also on editing existing tags
+* Correct display of select options
 
 ### Installation
 
-You need `aldeed:autoform` >= 6 to use this package.
-
+You need `aldeed:autoform` >= 6 to use this package.  
 You can then install this package via 
 
 `meteor add jkuester:autoform-tags`
+
+You manually need to install [imajus:autoform-bootstrap4](https://github.com/imajus/autoform-bootstrap4) in order to use this package.
+See the installation manual in the repo for setting up BS4 for your AutoForm.
 
 ### Creating a Tag-Field by Schema
 
@@ -22,15 +35,15 @@ There are many options to configure this component. The most minimal approach is
 
 ```javascript
 {
-	tags: {
-		type: Array,			// all tags will be saved in an array
-		autoform: {
-			type: 'tags',		// indicate to use tags add-on
-		},
-	},
-	'tags.$': {
-		type: String,
-	}
+  tags: {
+    type: Array,      // all tags will be saved in an array
+      autoform: {
+        type: 'tags'  // indicate to use tags add-on
+      }
+    'tags.$': {
+      type: String
+    }
+  }
 }
 ```
 
@@ -41,25 +54,26 @@ Furthermore you can limit the min/max length of the characters that are valid fo
 
 Validation for array size will be done by `AutoForm` while validation of character length is done within the component.
 
- ```javascript
+```javascript
 {
-	tags: {
-		type: Array,			// all tags will be saved in an array
-		minCount: 2,			// minimum number of tags
-		maxCount: 8,			// maximum number of tags
-		autoform: {
-			type: 'tags',		// indicate to use tags add-on
-			max: 16,			// max length of a tag in chars
-			min: 4,				// min length of a tag in chars
-		},
-	},
-	'tags.$': {
-		type: String,
-	}
+  tags: {
+    type: Array,      // all tags will be saved in an array
+    autoform: {
+      type: 'tags',   // indicate to use tags add-on
+      minCount: 2,    // minimum number of tags
+      maxCount: 8,    // maximum number of tags
+      max: 16,        // max length of a tag in chars
+      min: 4          // min length of a tag in chars
+    }
+  },
+  'tags.$': {
+    type: String,
+  }
 }
- ```
+```
  
- Note that `max` and `min` need to be defined within the `autoform` property of the array in order to behave properly.
+ Note that `max`, `min`, `maxCount` and `minCount` need **all** to be defined within the `autoform` property of the array in order to behave properly.
+ 
  
  ##### With Support
  
@@ -67,47 +81,55 @@ Validation for array size will be done by `AutoForm` while validation of charact
  If a user clicks a tag in the list, it is immediately added to the tag stack. 
  This list can also be used as source for allowed values.
  
-  ```javascript
- {
-	tags: {
-		type: Array,			// all tags will be saved in an array
-		autoform: {
-			placeholder: 'Enter a tag...',
-			type: 'tags',		// indicate to use tags add-on
-			options: () => ['apple', 'cherry', 'orange'],	// list of tags to be suggested
-			onlyOptions: false,  // if true only values in options are accepted
-		},
-	},
-	'tags.$': {
-		type: String,
-	}
+```javascript
+{
+  tags: {
+    type: Array,            // all tags will be saved in an array
+    autoform: {
+      placeholder: 'Enter a tag...',
+      type: 'tags',         // indicate to use tags add-on
+      options: () => [      // list of tags to be suggested
+        'apple', 
+        'cherry', 
+        'orange'
+        ],
+      onlyOptions: false    // if true only values in options are accepted
+    },
+    'tags.$': {
+      type: String
+    }
+  }
 }
-  ```
+```
  
  ##### Full Example
  
  You can also combine the above mentioned options:
  
- ```javascript
- {
-   tags: {
-		type: Array,			// all tags will be saved in an array
-		minCount: 2,			// minimum number of tags
-		maxCount: 8,			// maximum number of tags
-		autoform: {
-			placeholder: 'Enter a tag...',
-			type: 'tags',		// indicate to use tags add-on
-			max: 16,			// max length of a tag in chars
-			min: 4,				// min length of a tag in chars
-			options: () => ['apple', 'cherry', 'orange'],	// list of tags to be suggested
-			onlyOptions: true,  // if true only values in options are allowed
-		},
-	},
-	'tags.$': {
-		type: String,
-	}
- }
-   ```
+```javascript
+{
+  tags: {
+    type: Array,          // all tags will be saved in an array
+    autoform: {
+      placeholder: 'Enter a tag...',
+      type: 'tags',       // indicate to use tags add-on
+      max: 16,            // max length of a tag in chars
+      min: 4,             // min length of a tag in chars
+      minCount: 2,          // minimum number of tags
+      maxCount: 8,          // maximum number of tags
+      options: () => [    // list of tags to be suggested
+        'apple',
+        'cherry',
+        'orange'
+        ],
+      onlyOptions: true   // if true only values in options are allowed
+    },
+    'tags.$': {
+      type: String,
+    }
+  }
+}
+```
    
 ### Component Behavior and Interacting with Tags
 
