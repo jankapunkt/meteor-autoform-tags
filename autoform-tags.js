@@ -29,14 +29,14 @@ Template.afTags.onCreated(function () {
 
   instance.autorun(function () {
     const data = Template.currentData()
-    const {atts} = data
+    const { atts } = data
 
     // create dict of select options
     let optionsMap
     if (data.selectOptions) {
       optionsMap = {}
       data.selectOptions.forEach((entry) => {
-        optionsMap[entry] = true
+        optionsMap[ entry ] = true
       })
     }
 
@@ -48,9 +48,9 @@ Template.afTags.onCreated(function () {
     instance.state.set('optionsMap', optionsMap)
     instance.state.set('placeholder', atts.placeholder)
     instance.state.set('onlyOptions', !!atts.onlyOptions)
-    instance.state.set('dataSchemaKey', atts['data-schema-key'])
+    instance.state.set('dataSchemaKey', atts[ 'data-schema-key' ])
 
-    const {value} = data
+    const { value } = data
     if (value && instance.state.get('value').length === 0) {
       $('#afTags-hiddenInput').val(JSON.stringify(value))
       instance.state.set('value', value)
@@ -109,7 +109,7 @@ Template.afTags.helpers({
   showCharLimits () {
     const instance = Template.instance()
     return instance.state.get('editMode') &&
-    (instance.state.get('minLength') > -1 || instance.state.get('maxLength') > -1)
+      (instance.state.get('minLength') > -1 || instance.state.get('maxLength') > -1)
   },
   min () {
     const len = Template.instance().state.get('min')
@@ -143,7 +143,7 @@ function getTag (text = '') {
   return text.replace(/\s\s+/g, ' ').trim()
 }
 
-function applyInput ({templateInstance}) {
+function applyInput ({ templateInstance }) {
   const input = $('#aftags-input')
   const index = parseInt(input.attr('data-index'), 10)
   const target = templateInstance.state.get('target')
@@ -172,7 +172,7 @@ function applyInput ({templateInstance}) {
   const onlyOptions = templateInstance.state.get('onlyOptions')
   const optionsMap = templateInstance.state.get('optionsMap')
 
-  if (onlyOptions && optionsMap && !optionsMap[tag]) {
+  if (onlyOptions && optionsMap && !optionsMap[ tag ]) {
     // TODO show err msg
     return
   }
@@ -180,7 +180,7 @@ function applyInput ({templateInstance}) {
   if (index === -1) {
     value.push(tag)
   } else if (index === target) {
-    value[index] = tag
+    value[ index ] = tag
   } else {
     value.splice(index, 0, tag)
   }
@@ -196,6 +196,25 @@ function applyInput ({templateInstance}) {
 }
 
 Template.afTags.events({
+
+  'focus #aftags-input' (event, templateInstance) {
+    const $input = $(event.currentTarget)
+    const input = $input.get(0)
+    const length = $input.text().trim().length
+    if (length > 0) {
+      try {
+        const start = input.childNodes[ 1 ]
+        const range = document.createRange()
+        range.setStart(start, length)
+        range.setEnd(start, length)
+        const sel = window.getSelection()
+        sel.removeAllRanges()
+        sel.addRange(range)
+      } catch (e) {
+        console.error(e)
+      }
+    }
+  },
 
   'blur #aftags-input' (event, templateInstance) {
     // event.preventDefault();
@@ -226,7 +245,7 @@ Template.afTags.events({
 
   'click #aftags-input-applybutton' (event, templateInstance) {
     event.preventDefault()
-    applyInput({templateInstance})
+    applyInput({ templateInstance })
   },
 
   'input #aftags-input' (event, templateInstance) {
@@ -287,7 +306,7 @@ Template.afTags.events({
       return
     }
 
-    applyInput({templateInstance})
+    applyInput({ templateInstance })
   },
 
   'click .aftags-close' (event, templateInstance) {
