@@ -14,6 +14,7 @@ AutoForm.addInputType('tags', {
     return val && JSON.parse(val)
   },
   valueIn (initialValue) {
+    console.log('initialValue', initialValue)
     return initialValue
   }
 })
@@ -27,7 +28,7 @@ Template.afTags.onCreated(function () {
   instance.state.set('showPlaceholder', true)
 
   instance.autorun(function () {
-    const {data} = instance
+    const data = Template.currentData()
     const {atts} = data
 
     // create dict of select options
@@ -39,6 +40,8 @@ Template.afTags.onCreated(function () {
       })
     }
 
+    instance.state.set('min', atts.minCount || -1)
+    instance.state.set('max', atts.maxCount || -1)
     instance.state.set('minLength', atts.min || -1)
     instance.state.set('maxLength', atts.max || -1)
     instance.state.set('selectOptions', data.selectOptions)
@@ -93,8 +96,23 @@ Template.afTags.helpers({
     const double = Template.instance().state.get('double')
     return double > -1 && double === index
   },
-  hasLimits () {
-    return Template.instance().state.get('minLength') > -1 || Template.instance().state.get('maxLength') > -1
+  showTagLimits () {
+    const instance = Template.instance()
+    return instance.state.get('showPlaceholder') &&
+      (instance.state.get('min') > -1 || instance.state.get('max') > -1)
+  },
+  showCharLimits () {
+    const instance = Template.instance()
+    return !instance.state.get('showPlaceholder') &&
+    (instance.state.get('minLength') > -1 || instance.state.get('maxLength') > -1)
+  },
+  min () {
+    const len = Template.instance().state.get('min')
+    return len > -1 ? len : null
+  },
+  max () {
+    const len = Template.instance().state.get('max')
+    return len > -1 ? len : null
   },
   minLength () {
     const len = Template.instance().state.get('minLength')
