@@ -1,4 +1,9 @@
-# meteor-autoform-tags (Bootstrap 4)
+# Meteor AutoForm Tags (Bootstrap 4)
+
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+
+![GitHub](https://img.shields.io/github/license/jankapunkt/meteor-autoform-tags.svg)
+
 AutoForm add-on, that provides an interactive tag input.
 Optimized for Bootstrap 4. See installation for getting a BS4 theme for your AutoForm.
 
