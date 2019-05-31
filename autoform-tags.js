@@ -14,7 +14,6 @@ AutoForm.addInputType('tags', {
     return val && JSON.parse(val)
   },
   valueIn (initialValue) {
-    console.log('initialValue', initialValue)
     return initialValue
   }
 })
@@ -49,12 +48,18 @@ Template.afTags.onCreated(function () {
       })
     }
 
+    // length of overall tags defined by
+    // minCount: minimum required number
+    // maxCount: maximum allowed number
     instance.state.set('min', atts.minCount || 1)
     instance.state.set('max', atts.maxCount || 10)
     instance.state.set('showTagLen', atts.minCount > 0 && atts.maxCount > 0)
-    instance.state.set('minLength', atts.min || 1)
-    instance.state.set('maxLength', atts.max || 50)
-    instance.state.set('showCharLen', atts.min > 0 && atts.max > 0)
+
+    // length of chars per tag
+    instance.state.set('minLength', (atts.min || atts.minChars) || 1)
+    instance.state.set('maxLength', (atts.max || atts.maxChars) || 50)
+    instance.state.set('showCharLen', (atts.min || atts.minChars) > 0 && (atts.max || atts.maxChars) > 0)
+
     instance.state.set('selectOptions', data.selectOptions)
     instance.state.set('optionsMap', optionsMap)
     instance.state.set('placeholder', atts.placeholder)
@@ -111,7 +116,7 @@ Template.afTags.helpers({
   },
   showCharLimits () {
     const instance = Template.instance()
-    return instance.state.get('editMode') && instance.state.get('showCharLen')
+    return instance.state.get('showCharLen') && instance.state.get('editMode')
   },
   min () {
     const len = Template.instance().state.get('min')
