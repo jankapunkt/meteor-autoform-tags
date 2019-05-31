@@ -13,6 +13,11 @@ You can check out the latest published state of this package using [this example
 
 ### Changelog
 
+**1.1**
+
+* Fixed word wrapping failure on mobile devices
+* Fix missing display of current characters in some cases
+
 **1.0**
 
 * Moved to Bootstrap 4 theme, use 'card' as base for template
