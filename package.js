@@ -2,7 +2,7 @@
 
 Package.describe({
   name: 'jkuester:autoform-tags',
-  version: '1.0.0',
+  version: '1.1.0',
   // Brief, one-line summary of the package.
   summary: 'Provides a form field to enter tags.',
   // URL to the Git repository containing the source code for this package.
