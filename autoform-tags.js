@@ -49,10 +49,12 @@ Template.afTags.onCreated(function () {
       })
     }
 
-    instance.state.set('min', atts.minCount || -1)
-    instance.state.set('max', atts.maxCount || -1)
-    instance.state.set('minLength', atts.min || -1)
-    instance.state.set('maxLength', atts.max || -1)
+    instance.state.set('min', atts.minCount || 1)
+    instance.state.set('max', atts.maxCount || 10)
+    instance.state.set('showTagLen', atts.minCount > 0 && atts.maxCount > 0)
+    instance.state.set('minLength', atts.min || 1)
+    instance.state.set('maxLength', atts.max || 50)
+    instance.state.set('showCharLen', atts.min > 0 && atts.max > 0)
     instance.state.set('selectOptions', data.selectOptions)
     instance.state.set('optionsMap', optionsMap)
     instance.state.set('placeholder', atts.placeholder)
@@ -105,13 +107,11 @@ Template.afTags.helpers({
   },
   showTagLimits () {
     const instance = Template.instance()
-    return !instance.state.get('editMode') &&
-      (instance.state.get('min') > -1 || instance.state.get('max') > -1)
+    return instance.state.get('showTagLen')
   },
   showCharLimits () {
     const instance = Template.instance()
-    return instance.state.get('editMode') &&
-      (instance.state.get('minLength') > -1 || instance.state.get('maxLength') > -1)
+    return instance.state.get('editMode') && instance.state.get('showCharLen')
   },
   min () {
     const len = Template.instance().state.get('min')

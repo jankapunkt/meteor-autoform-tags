@@ -1,60 +1,74 @@
 <template name="afTags">
-	<span class="pull-right">
-		{{#if showCharLimits}}
-			<span class="aftags-range  {{#if limitsExceeded}}text-warning{{else}}text-muted{{/if}}">
-				{{#with minLength}}{{this}} &lt; {{/with}}&#x270E;{{currentLenth}}{{#with maxLength}} &lt; {{this}}{{/with}}
-			</span>
-		{{/if}}
+	<div class="d-flex justify-content-between">
+        {{! number of tag limits }}
         {{#if showTagLimits}}
             <span class="aftags-range text-muted">
 				{{#with min}}{{this}} &lt; {{/with}} #{{currentTags}} {{#with max}} &lt; {{this}}{{/with}}
 			</span>
         {{/if}}
-	</span>
+
+        {{! character limits }}
+		{{#if showCharLimits}}
+			<span class="aftags-range  {{#if limitsExceeded}}text-warning{{else}}text-muted{{/if}}">
+				{{#with minLength}}{{this}} &lt; {{/with}}&#x270E;{{currentLenth}}{{#with maxLength}} &lt; {{this}}{{/with}}
+			</span>
+		{{/if}}
+	</div>
 	<div class="card aftags-container">
-		<div class="card-body">
-			{{#each tags}}
-				<div class="btn-group aftags-tag-container" role="group">
-					{{#if isSelected @index}}
-						<span id="aftags-input" class="btn btn-outline-secondary"
-							  contenteditable="true" autofocus data-index="{{@index}}">
-							{{this}}
-						</span>
-						<button id="aftags-input-applybutton" class="btn btn-secondary">&#x2714;</button>
-					{{else}}
-						<button class="btn {{#if isDouble @index}}btn-warning{{else}}btn-outline-secondary{{/if}} btn-sm aftags-tag"
-                                disabled="{{#if editMode}}disabled{{/if}}"
-							  data-index="{{@index}}">{{this}}</button>
-						<button class="btn btn-sm btn-secondary btn-sm aftags-close"
-                              disabled="{{#if editMode}}disabled{{/if}}"
-                              data-index="{{@index}}">
-                            &times;
-                        </button>
-					{{/if}}
-				</div>
-			{{/each}}
+		<table class="table">
+            <tbody>
+                <tr>
+                    <td>
+                        {{#each tags}}
+                            <div class="btn-group aftags-tag-container" role="group">
 
-			{{#if isSelected null}}
-				<div class="btn-group aftags-tag-container" role="group">
-					{{#if editMode}}
-                        <span id="aftags-input" class="btn btn-outline-{{#if limitsExceeded}}warning{{else}}secondary{{/if}}"
-                              contenteditable="true" autofocus data-index="-1"></span>
-						<button id="aftags-input-applybutton" class="btn btn-secondary">&#x2714;</button>
-					{{else}}
-						<button id="aftags-input-add-tag-button" class="btn btn-sm btn-success">
-                            <strong>+</strong>
-                            <span>{{placeholder}}</span>
-                        </button>
-					{{/if}}
-				</div>
-			{{/if}}
-		</div>
+                                {{! the current selected tag to be edited }}
+                                {{#if isSelected @index}}
+                                    <span id="aftags-input" class="btn btn-outline-secondary aftags-wrap"
+                                          contenteditable="true" autofocus data-index="{{@index}}">
+                                        {{this}}
+                                    </span>
+                                    <button id="aftags-input-applybutton" class="btn btn-secondary">&#x2714;</button>
 
+                                {{! an unselected tag}}
+                                {{else}}
+                                    <button class="btn {{#if isDouble @index}}btn-warning{{else}}btn-outline-secondary{{/if}} btn-sm aftags-tag aftags-wrap"
+                                            disabled="{{#if editMode}}disabled{{/if}}"
+                                            data-index="{{@index}}">{{this}}</button>
+                                    <button class="btn btn-sm btn-secondary btn-sm aftags-close"
+                                            disabled="{{#if editMode}}disabled{{/if}}"
+                                            data-index="{{@index}}">
+                                        &times;
+                                    </button>
+                                {{/if}}
+                            </div>
+                        {{/each}}
+
+                        {{#if isSelected null}}
+                            <div class="btn-group aftags-tag-container" role="group">
+                                {{#if editMode}}
+                                    <span id="aftags-input" class="btn btn-outline-{{#if limitsExceeded}}warning{{else}}secondary{{/if}} aftags-wrap"
+                                          contenteditable="true" autofocus data-index="-1"></span>
+                                    <button id="aftags-input-applybutton" class="btn btn-secondary">&#x2714;</button>
+                                {{else}}
+                                    <button id="aftags-input-add-tag-button" class="btn btn-sm btn-success">
+                                        <strong>+</strong>
+                                        <span>{{placeholder}}</span>
+                                    </button>
+                                {{/if}}
+                            </div>
+                        {{/if}}
+                    </td>
+                </tr>
+            </tbody>
+		</table>
+
+        {{! optional predefined tags that can be selected }}
 		{{#if showSelectOptions}}
 			<div class="card-footer aftags-options">
 				{{#each selectOptions}}
 					{{#unless selected this}}
-						<button class="btn btn-sm btn-secondary aftags-tag aftags-option" data-target="{{this}}">
+						<button class="btn btn-sm btn-secondary aftags-tag aftags-wrap aftags-option" data-target="{{this}}">
 							{{this}}
 						</button>
 					{{else}}
