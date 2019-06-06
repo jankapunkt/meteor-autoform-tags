@@ -72,16 +72,24 @@ Template.afTags.onCreated(function () {
 
     instance.state.set('loadComplete', true)
   })
+})
+
+Template.afTags.onRendered(function () {
+  const instance = this
 
   // dedicated Tracker to set an existing value
   // if, and only if, we pass in a value AND the internal state has
   // not a value (due it's already set or updated)
   instance.autorun(() => {
+    const loadComplete = instance.state.get('loadComplete')
+    if (!loadComplete) return
+
     const data = Template.currentData()
     const currentValue = instance.state.get('value') || []
     const dataValue = data.value || []
     if (currentValue.length === 0 && dataValue.length > 0) {
       instance.state.set('value', dataValue)
+      $('#afTags-hiddenInput').val(JSON.stringify(dataValue))
     }
   })
 })
