@@ -72,6 +72,18 @@ Template.afTags.onCreated(function () {
 
     instance.state.set('loadComplete', true)
   })
+
+  // dedicated Tracker to set an existing value
+  // if, and only if, we pass in a value AND the internal state has
+  // not a value (due it's already set or updated)
+  instance.autorun(() => {
+    const data = Template.currentData()
+    const currentValue = instance.state.get('value') || []
+    const dataValue = data.value || []
+    if (currentValue.length === 0 && dataValue.length > 0) {
+      instance.state.set('value', dataValue)
+    }
+  })
 })
 
 Template.afTags.helpers({

@@ -13,6 +13,10 @@ You can check out the latest published state of this package using [this example
 
 ### Changelog
 
+**1.2**
+
+* Implemented passing an existing value reactively
+
 **1.1**
 
 * Fixed word wrapping failure on mobile devices
