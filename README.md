@@ -13,6 +13,10 @@ You can check out the latest published state of this package using [this example
 
 ### Changelog
 
+**1.2.1**
+
+* Fixed missing update on hidden input when value is passed via data
+
 **1.2**
 
 * Implemented passing an existing value reactively

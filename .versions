@@ -30,10 +30,10 @@ html-tools@1.0.11
 htmljs@1.0.11
 id-map@1.1.0
 inter-process-messaging@0.1.0
-jkuester:autoform-tags@1.2.0
+jkuester:autoform-tags@1.2.1
 jquery@1.11.11
 livedata@1.0.18
-local-test:jkuester:autoform-tags@1.2.0
+local-test:jkuester:autoform-tags@1.2.1
 logging@1.1.20
 meteor@1.9.3
 minimongo@1.4.5
