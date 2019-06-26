@@ -29,12 +29,6 @@ Template.afTags.onCreated(function () {
 
   instance.state.set('dataSchemaKey', instance.data.atts[ 'data-schema-key' ])
 
-  const { value } = instance.data
-  if (value && instance.state.get('value').length === 0) {
-    $('#afTags-hiddenInput').val(JSON.stringify(value))
-    instance.state.set('value', value)
-  }
-
   instance.autorun(function () {
     const data = Template.currentData()
     const { atts } = data
@@ -65,33 +59,35 @@ Template.afTags.onCreated(function () {
     instance.state.set('placeholder', atts.placeholder)
     instance.state.set('onlyOptions', !!atts.onlyOptions)
 
-    const editMode = instance.state.get('editMode')
-    if (editMode) {
-      setTimeout(() => $('#aftags-input').focus(), 50)
-    }
-
     instance.state.set('loadComplete', true)
   })
 })
 
 Template.afTags.onRendered(function () {
   const instance = this
+  const { data } = instance
 
-  // dedicated Tracker to set an existing value
   // if, and only if, we pass in a value AND the internal state has
   // not a value (due it's already set or updated)
-  instance.autorun(() => {
-    const loadComplete = instance.state.get('loadComplete')
-    if (!loadComplete) return
+  const currentValue = instance.state.get('value') || []
+  const dataValue = data.value || []
+  if (currentValue.length === 0 && dataValue.length > 0) {
+    instance.state.set('value', dataValue)
+    const stringValue = JSON.stringify(dataValue)
+    instance.$('#afTags-hiddenInput').val(stringValue)
+  }
 
-    const data = Template.currentData()
-    const currentValue = instance.state.get('value') || []
-    const dataValue = data.value || []
-    if (currentValue.length === 0 && dataValue.length > 0) {
-      instance.state.set('value', dataValue)
-      $('#afTags-hiddenInput').val(JSON.stringify(dataValue))
+  instance.autorun(() => {
+    const editMode = instance.state.get('editMode')
+    if (editMode) {
+      setTimeout(() => instance.$('#aftags-input').focus(), 50)
     }
   })
+})
+
+Template.afTags.onDestroyed(function () {
+  const instance = this
+  instance.state.clear()
 })
 
 Template.afTags.helpers({
@@ -171,7 +167,7 @@ function getTag (text = '') {
 }
 
 function applyInput ({ templateInstance }) {
-  const input = $('#aftags-input')
+  const input = templateInstance.$('#aftags-input')
   const index = parseInt(input.attr('data-index'), 10)
   const target = templateInstance.state.get('target')
   const value = templateInstance.state.get('value')
@@ -212,20 +208,20 @@ function applyInput ({ templateInstance }) {
     value.splice(index, 0, tag)
   }
 
-  $('#afTags-hiddenInput').val(JSON.stringify(value))
+  templateInstance.$('#afTags-hiddenInput').val(JSON.stringify(value))
   templateInstance.state.set('value', value)
   templateInstance.state.set('target', null)
   input.text('')
 
   setTimeout(() => {
-    $('#aftags-input').focus()
+    templateInstance.$('#aftags-input').focus()
   }, 30)
 }
 
 Template.afTags.events({
 
   'focus #aftags-input' (event, templateInstance) {
-    const $input = $(event.currentTarget)
+    const $input = templateInstance.$(event.currentTarget)
     const input = $input.get(0)
     const length = $input.text().trim().length
 
@@ -252,7 +248,7 @@ Template.afTags.events({
     // event.stopPropagation();
 
     // cancel on blur
-    const input = $(event.currentTarget)
+    const input = templateInstance.$(event.currentTarget)
     const index = parseInt(input.attr('data-index'), 10)
     const target = templateInstance.state.get('target')
     if (index === target) {
@@ -280,7 +276,7 @@ Template.afTags.events({
   'input #aftags-input' (event, templateInstance) {
     // detect the current input and immediately
     // cache it to be a double if true
-    const input = $(event.target)
+    const input = templateInstance.$(event.target)
     const tag = getTag(input.text())
     const index = parseInt(input.attr('data-index'), 10)
     const value = templateInstance.state.get('value')
@@ -316,7 +312,7 @@ Template.afTags.events({
       return
     }
 
-    const input = $(event.target)
+    const input = templateInstance.$(event.target)
     const index = parseInt(input.attr('data-index'), 10)
 
     event.preventDefault()
@@ -343,7 +339,7 @@ Template.afTags.events({
     event.stopPropagation()
     // delete tag
 
-    const input = $(event.currentTarget)
+    const input = templateInstance.$(event.currentTarget)
     const doubleIndex = templateInstance.state.get('double')
     const index = parseInt(input.attr('data-index'), 10)
 
@@ -356,11 +352,11 @@ Template.afTags.events({
     const value = templateInstance.state.get('value')
     value.splice(index, 1)
 
-    $('#afTags-hiddenInput').val(JSON.stringify(value))
+    templateInstance.$('#afTags-hiddenInput').val(JSON.stringify(value))
     templateInstance.state.set('value', value)
 
     setTimeout(() => {
-      $('#aftags-input').focus()
+      templateInstance.$('#aftags-input').focus()
     }, 30)
   },
 
@@ -369,12 +365,12 @@ Template.afTags.events({
     event.stopPropagation()
 
     // edit tag
-    const index = $(event.currentTarget).attr('data-index')
+    const index = templateInstance.$(event.currentTarget).attr('data-index')
     templateInstance.state.set('target', parseInt(index, 10))
     templateInstance.state.set('editMode', true)
 
     setTimeout(() => {
-      $('#aftags-input').focus()
+      templateInstance.$('#aftags-input').focus()
     }, 30)
   },
 
@@ -382,14 +378,14 @@ Template.afTags.events({
     event.preventDefault()
     event.stopPropagation()
 
-    const input = $(event.currentTarget)
+    const input = templateInstance.$(event.currentTarget)
     const target = input.attr('data-target')
     const value = templateInstance.state.get('value')
 
     value.push(target)
 
     input.text('')
-    $('#afTags-hiddenInput').val(JSON.stringify(value))
+    templateInstance.$('#afTags-hiddenInput').val(JSON.stringify(value))
     templateInstance.state.set('value', value)
     templateInstance.state.set('target', null)
   }
