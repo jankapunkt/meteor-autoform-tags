@@ -13,6 +13,10 @@ You can check out the latest published state of this package using [this example
 
 ### Changelog
 
+**1.2.2*
+
+* Fixed compatibility for multiple template instances in same form 
+
 **1.2.1**
 
 * Fixed missing update on hidden input when value is passed via data
