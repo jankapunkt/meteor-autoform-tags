@@ -47,12 +47,12 @@ Template.afTags.onCreated(function () {
     // maxCount: maximum allowed number
     instance.state.set('min', atts.minCount || 1)
     instance.state.set('max', atts.maxCount || 10)
-    instance.state.set('showTagLen', atts.minCount > 0 && atts.maxCount > 0)
+    instance.state.set('showTagLen', atts.showTagLength && atts.minCount > 0 && atts.maxCount > 0)
 
     // length of chars per tag
     instance.state.set('minLength', (atts.min || atts.minChars) || 1)
     instance.state.set('maxLength', (atts.max || atts.maxChars) || 50)
-    instance.state.set('showCharLen', (atts.min || atts.minChars) > 0 && (atts.max || atts.maxChars) > 0)
+    instance.state.set('showCharLen', atts.showCharLength && (atts.min || atts.minChars) > 0 && (atts.max || atts.maxChars) > 0)
 
     instance.state.set('selectOptions', data.selectOptions)
     instance.state.set('optionsMap', optionsMap)
