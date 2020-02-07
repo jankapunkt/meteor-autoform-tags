@@ -80,7 +80,7 @@ Template.afTags.onRendered(function () {
   instance.autorun(() => {
     const editMode = instance.state.get('editMode')
     if (editMode) {
-      setTimeout(() => instance.$('#aftags-input').focus(), 50)
+      setTimeout(() => instance.$('.aftags-input').focus(), 50)
     }
   })
 })
@@ -167,7 +167,7 @@ function getTag (text = '') {
 }
 
 function applyInput ({ templateInstance }) {
-  const input = templateInstance.$('#aftags-input')
+  const input = templateInstance.$('.aftags-input')
   const index = parseInt(input.attr('data-index'), 10)
   const target = templateInstance.state.get('target')
   const value = templateInstance.state.get('value')
@@ -214,13 +214,13 @@ function applyInput ({ templateInstance }) {
   input.text('')
 
   setTimeout(() => {
-    templateInstance.$('#aftags-input').focus()
+    templateInstance.$('.aftags-input').focus()
   }, 30)
 }
 
 Template.afTags.events({
 
-  'focus #aftags-input' (event, templateInstance) {
+  'focus .aftags-input' (event, templateInstance) {
     const $input = templateInstance.$(event.currentTarget)
     const input = $input.get(0)
     const length = $input.text().trim().length
@@ -243,7 +243,7 @@ Template.afTags.events({
     templateInstance.state.set('currentLength', length)
   },
 
-  'blur #aftags-input' (event, templateInstance) {
+  'blur .aftags-input' (event, templateInstance) {
     // event.preventDefault();
     // event.stopPropagation();
 
@@ -273,7 +273,7 @@ Template.afTags.events({
     applyInput({ templateInstance })
   },
 
-  'input #aftags-input' (event, templateInstance) {
+  'input .aftags-input' (event, templateInstance) {
     // detect the current input and immediately
     // cache it to be a double if true
     const input = templateInstance.$(event.target)
@@ -306,7 +306,7 @@ Template.afTags.events({
     templateInstance.state.set('double', isDouble ? doubleIndex : -1)
   },
 
-  'keydown #aftags-input' (event, templateInstance) {
+  'keydown .aftags-input' (event, templateInstance) {
     // if typing... return
     if (event.key !== 'Enter' && event.key !== 'Escape' && event.key !== 'Tab') {
       return
@@ -356,7 +356,7 @@ Template.afTags.events({
     templateInstance.state.set('value', value)
 
     setTimeout(() => {
-      templateInstance.$('#aftags-input').focus()
+      templateInstance.$('.aftags-input').focus()
     }, 30)
   },
 
@@ -370,7 +370,7 @@ Template.afTags.events({
     templateInstance.state.set('editMode', true)
 
     setTimeout(() => {
-      templateInstance.$('#aftags-input').focus()
+      templateInstance.$('.aftags-input').focus()
     }, 30)
   },
 
