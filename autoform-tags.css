@@ -23,6 +23,10 @@
 
 }
 
+.aftags-input {
+	min-width : 5rem;
+}
+
 .aftags-range {
 	padding: 4px;
 }
