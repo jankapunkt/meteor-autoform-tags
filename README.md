@@ -13,6 +13,13 @@ You can check out the latest published state of this package using [this example
 
 ### Changelog
 
+**1.2.3*
+
+* aftags-input is now a class attribute instead of id
+* aftags-input has min-width of 5rem
+* events use new aftags-input class attribute
+* show tag length and char length hints using showTagLength and showCharLength flags
+
 **1.2.2*
 
 * Fixed compatibility for multiple template instances in same form 
