@@ -24,11 +24,11 @@
 
                                 {{! the current selected tag to be edited }}
                                 {{#if isSelected @index}}
-                                    <span id="aftags-input" class="btn btn-outline-secondary aftags-wrap"
+                                    <span class="aftags-input btn btn-outline-secondary aftags-wrap"
                                           contenteditable="true" autofocus data-index="{{@index}}">
                                         {{this}}
                                     </span>
-                                    <button id="aftags-input-applybutton" class="btn btn-secondary">&#x2714;</button>
+                                    <button id="aftags-input-applybutton" class="btn btn-success">&#x2714;</button>
 
                                 {{! an unselected tag}}
                                 {{else}}
@@ -47,9 +47,9 @@
                         {{#if isSelected null}}
                             <div class="btn-group aftags-tag-container" role="group">
                                 {{#if editMode}}
-                                    <span id="aftags-input" class="btn btn-outline-{{#if limitsExceeded}}warning{{else}}secondary{{/if}} aftags-wrap"
+                                    <span class="aftags-input btn btn-outline-{{#if limitsExceeded}}warning{{else}}secondary{{/if}} aftags-wrap"
                                           contenteditable="true" autofocus data-index="-1"></span>
-                                    <button id="aftags-input-applybutton" class="btn btn-secondary">&#x2714;</button>
+                                    <button id="aftags-input-applybutton" class="btn btn-success">&#x2714;</button>
                                 {{else}}
                                     <button id="aftags-input-add-tag-button" class="btn btn-sm btn-success">
                                         <strong>+</strong>
