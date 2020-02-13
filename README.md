@@ -13,14 +13,21 @@ You can check out the latest published state of this package using [this example
 
 ### Changelog
 
-**1.2.3*
+**1.3.0**
+* use `textarea` instead of `contenteditable` to fix iOS input bug
+* redesign layout for better ux
+* add explicit mobile events to the Template's event map
+* fix select logic
+* removed direct jquery dependency
+
+**1.2.3**
 
 * aftags-input is now a class attribute instead of id
 * aftags-input has min-width of 5rem
 * events use new aftags-input class attribute
 * show tag length and char length hints using showTagLength and showCharLength flags
 
-**1.2.2*
+**1.2.2**
 
 * Fixed compatibility for multiple template instances in same form 
 
