@@ -1,8 +1,6 @@
 /* global AutoForm */
 import { Template } from 'meteor/templating'
 import { ReactiveDict } from 'meteor/reactive-dict'
-import { $ } from 'meteor/jquery'
-
 import './autoform-tags.css'
 import './autoform-tags.html'
 
@@ -26,8 +24,7 @@ Template.afTags.onCreated(function () {
   instance.state.set('double', null)
   instance.state.set('editMode', false)
   instance.state.set('showSelectOptions', true)
-
-  instance.state.set('dataSchemaKey', instance.data.atts[ 'data-schema-key' ])
+  instance.state.set('dataSchemaKey', instance.data.atts['data-schema-key'])
 
   instance.autorun(function () {
     const data = Template.currentData()
@@ -38,28 +35,33 @@ Template.afTags.onCreated(function () {
     if (data.selectOptions) {
       optionsMap = {}
       data.selectOptions.forEach((entry) => {
-        optionsMap[ entry ] = true
+        optionsMap[entry] = true
       })
     }
 
     // length of overall tags defined by
     // minCount: minimum required number
     // maxCount: maximum allowed number
-    instance.state.set('min', atts.minCount || 1)
-    instance.state.set('max', atts.maxCount || 10)
-    instance.state.set('showTagLen', atts.showTagLength && atts.minCount > 0 && atts.maxCount > 0)
+    const runtimeData = {}
+    runtimeData.min = atts.minCount || 1
+    runtimeData.max = atts.maxCount || 10
+    runtimeData.showTagLen = atts.showTagLength && atts.minCount > 0 && atts.maxCount > 0
 
     // length of chars per tag
-    instance.state.set('minLength', (atts.min || atts.minChars) || 1)
-    instance.state.set('maxLength', (atts.max || atts.maxChars) || 50)
-    instance.state.set('showCharLen', atts.showCharLength && (atts.min || atts.minChars) > 0 && (atts.max || atts.maxChars) > 0)
+    runtimeData.minLength = (atts.min || atts.minChars) || 1
+    runtimeData.maxLength = (atts.max || atts.maxChars) || 524288
+    runtimeData.showCharLen = atts.showCharLength && (atts.min || atts.minChars) > 0 && (atts.max || atts.maxChars) > 0
 
-    instance.state.set('selectOptions', data.selectOptions)
-    instance.state.set('optionsMap', optionsMap)
-    instance.state.set('placeholder', atts.placeholder)
-    instance.state.set('onlyOptions', !!atts.onlyOptions)
+    runtimeData.selectOptions = data.selectOptions
+    runtimeData.optionsMap = optionsMap
+    runtimeData.placeholder = atts.placeholder
+    runtimeData.onlyOptions = !!atts.onlyOptions
 
-    instance.state.set('loadComplete', true)
+    const className = data.atts.class || ''
+    runtimeData.invalid = className.includes('is-invalid')
+    runtimeData.loadComplete = true
+
+    instance.state.set(runtimeData)
   })
 })
 
@@ -147,8 +149,7 @@ Template.afTags.helpers({
     return len > -1 ? len : null
   },
   maxLength () {
-    const len = Template.instance().state.get('maxLength')
-    return len > -1 ? len : null
+    return Template.instance().state.get('maxLength')
   },
   limitsExceeded () {
     return Template.instance().state.get('limitsExceeded')
@@ -159,6 +160,9 @@ Template.afTags.helpers({
   currentTags () {
     const value = Template.instance().state.get('value')
     return (value && value.length) || 0
+  },
+  invalid () {
+    return Template.instance().state.get('invalid')
   }
 })
 
@@ -171,7 +175,7 @@ function applyInput ({ templateInstance }) {
   const index = parseInt(input.attr('data-index'), 10)
   const target = templateInstance.state.get('target')
   const value = templateInstance.state.get('value')
-  const tag = getTag(input.text())
+  const tag = getTag(input.val())
 
   const doubleIndex = templateInstance.state.get('double')
   if (doubleIndex > -1 && doubleIndex !== index) return
@@ -195,7 +199,7 @@ function applyInput ({ templateInstance }) {
   const onlyOptions = templateInstance.state.get('onlyOptions')
   const optionsMap = templateInstance.state.get('optionsMap')
 
-  if (onlyOptions && optionsMap && !optionsMap[ tag ]) {
+  if (onlyOptions && optionsMap && !optionsMap[tag]) {
     // TODO show err msg
     return
   }
@@ -203,7 +207,7 @@ function applyInput ({ templateInstance }) {
   if (index === -1) {
     value.push(tag)
   } else if (index === target) {
-    value[ index ] = tag
+    value[index] = tag
   } else {
     value.splice(index, 0, tag)
   }
@@ -211,7 +215,7 @@ function applyInput ({ templateInstance }) {
   templateInstance.$('#afTags-hiddenInput').val(JSON.stringify(value))
   templateInstance.state.set('value', value)
   templateInstance.state.set('target', null)
-  input.text('')
+  input.val('')
 
   setTimeout(() => {
     templateInstance.$('.aftags-input').focus()
@@ -222,39 +226,21 @@ Template.afTags.events({
 
   'focus .aftags-input' (event, templateInstance) {
     const $input = templateInstance.$(event.currentTarget)
-    const input = $input.get(0)
-    const length = $input.text().trim().length
-
-    if (length > 0) {
-      try {
-        const isCurrent = input.childNodes.length === 1
-        const start = input.childNodes[ isCurrent ? 0 : 1 ]
-        const range = document.createRange()
-        range.setStart(start, length)
-        range.setEnd(start, length)
-        const sel = window.getSelection()
-        sel.removeAllRanges()
-        sel.addRange(range)
-      } catch (e) {
-        console.error(e)
-      }
-    }
-
+    const length = $input.val().trim().length
     templateInstance.state.set('currentLength', length)
   },
 
   'blur .aftags-input' (event, templateInstance) {
-    // event.preventDefault();
-    // event.stopPropagation();
-
     // cancel on blur
     const input = templateInstance.$(event.currentTarget)
     const index = parseInt(input.attr('data-index'), 10)
     const target = templateInstance.state.get('target')
+
     if (index === target) {
       templateInstance.state.set('target', null)
     }
-    const tagLength = input.text().trim().length
+
+    const tagLength = input.val().trim().length
     if (tagLength === 0 || index > -1) {
       templateInstance.state.set('editMode', false)
       templateInstance.state.set('currentLength', 0)
@@ -262,22 +248,23 @@ Template.afTags.events({
       templateInstance.state.set('double', -1)
     }
   },
-
-  'click #aftags-input-add-tag-button' (event, templateInstance) {
+  'click/touchstart #aftags-input-add-tag-button' (event, templateInstance) {
     event.preventDefault()
+    if (templateInstance.data.atts.min) {
+      templateInstance.state.set('limitsExceeded', true)
+    }
     templateInstance.state.set('editMode', true)
   },
-
-  'click #aftags-input-applybutton' (event, templateInstance) {
+  'mousedown/touchstart #aftags-input-applybutton' (event, templateInstance) {
+    event.stopPropagation()
     event.preventDefault()
     applyInput({ templateInstance })
   },
-
   'input .aftags-input' (event, templateInstance) {
     // detect the current input and immediately
     // cache it to be a double if true
     const input = templateInstance.$(event.target)
-    const tag = getTag(input.text())
+    const tag = getTag(input.val())
     const index = parseInt(input.attr('data-index'), 10)
     const value = templateInstance.state.get('value')
 
@@ -324,7 +311,7 @@ Template.afTags.events({
       templateInstance.state.set('double', -1)
 
       if (index === -1) {
-        input.text('')
+        input.val('')
       }
 
       input.blur()
@@ -334,11 +321,10 @@ Template.afTags.events({
     applyInput({ templateInstance })
   },
 
-  'click .aftags-close' (event, templateInstance) {
+  'click/touchstart .aftags-close' (event, templateInstance) {
     event.preventDefault()
     event.stopPropagation()
     // delete tag
-
     const input = templateInstance.$(event.currentTarget)
     const doubleIndex = templateInstance.state.get('double')
     const index = parseInt(input.attr('data-index'), 10)
@@ -360,21 +346,24 @@ Template.afTags.events({
     }, 30)
   },
 
-  'click .aftags-tag' (event, templateInstance) {
+  'mousedown/touchstart .aftags-tag' (event, templateInstance) {
     event.preventDefault()
-    event.stopPropagation()
 
-    // edit tag
-    const index = templateInstance.$(event.currentTarget).attr('data-index')
-    templateInstance.state.set('target', parseInt(index, 10))
-    templateInstance.state.set('editMode', true)
+    const $target = templateInstance.$(event.currentTarget)
+    const index = $target.attr('data-index')
 
     setTimeout(() => {
-      templateInstance.$('.aftags-input').focus()
+      templateInstance.state.set({
+        editMode: true,
+        target: parseInt(index, 10)
+      })
+      setTimeout(() => {
+        templateInstance.$('.aftags-input').focus()
+      }, 20)
     }, 30)
   },
 
-  'mousedown .aftags-option' (event, templateInstance) {
+  'mousedown/touchstart .aftags-option' (event, templateInstance) {
     event.preventDefault()
     event.stopPropagation()
 
@@ -383,10 +372,15 @@ Template.afTags.events({
     const value = templateInstance.state.get('value')
 
     value.push(target)
-
-    input.text('')
+    input.val('')
     templateInstance.$('#afTags-hiddenInput').val(JSON.stringify(value))
-    templateInstance.state.set('value', value)
-    templateInstance.state.set('target', null)
+
+    setTimeout(() => {
+      templateInstance.state.set({
+        value: value,
+        target: null,
+        editMode: false
+      })
+    }, 30)
   }
 })
