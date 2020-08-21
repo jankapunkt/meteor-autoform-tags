@@ -13,6 +13,10 @@ You can check out the latest published state of this package using [this example
 
 ### Changelog
 
+**2.0.0**
+
+* Breaking change: default export is a module with dynamic import, see documentation on how to import
+
 **1.3.0**
 * use `textarea` instead of `contenteditable` to fix iOS input bug
 * redesign layout for better ux
@@ -60,8 +64,28 @@ You can then install this package via
 
 `meteor add jkuester:autoform-tags`
 
-You manually need to install [imajus:autoform-bootstrap4](https://github.com/imajus/autoform-bootstrap4) in order to use this package.
+You manually need to install [imajus:autoform-bootstrap4](https://github.com/imajus/autoform-bootstrap4) (AutoForm 6.X)
+or [jkuester:autoform-bootstrap4](https://github.com/jkuester/autoform-bootstrap4) (AutoForm 7.X) in order to use this package.
 See the installation manual in the repo for setting up BS4 for your AutoForm.
+
+### Import the package
+
+By default the package now exports an async function to initialize the extension:
+
+```javascript
+const AFTags = (await import('meteor/jkuester:autoform-tags')).default
+await AFTags.load()
+```
+
+### Static import
+
+You can still import this package as with versions < 2.0.0 by adding an evironment flag when running Meteor:
+
+```javascript
+$ AFTAGS_DYNAMIC=0 meteor
+```
+
+Then the package will be automatically added to your initial client bundle
 
 ### Creating a Tag-Field by Schema
 

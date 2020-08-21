@@ -223,7 +223,6 @@ function applyInput ({ templateInstance }) {
 }
 
 Template.afTags.events({
-
   'focus .aftags-input' (event, templateInstance) {
     const $input = templateInstance.$(event.currentTarget)
     const length = $input.val().trim().length
@@ -231,6 +230,7 @@ Template.afTags.events({
   },
 
   'blur .aftags-input' (event, templateInstance) {
+    debugger
     // cancel on blur
     const input = templateInstance.$(event.currentTarget)
     const index = parseInt(input.attr('data-index'), 10)
