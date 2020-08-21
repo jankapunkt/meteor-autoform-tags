@@ -230,7 +230,6 @@ Template.afTags.events({
   },
 
   'blur .aftags-input' (event, templateInstance) {
-    debugger
     // cancel on blur
     const input = templateInstance.$(event.currentTarget)
     const index = parseInt(input.attr('data-index'), 10)
