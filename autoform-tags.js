@@ -26,6 +26,10 @@ Template.afTags.onCreated(function () {
   instance.state.set('showSelectOptions', true)
   instance.state.set('dataSchemaKey', instance.data.atts['data-schema-key'])
 
+  instance.setValue = (value) => {
+
+  }
+
   instance.autorun(function () {
     const data = Template.currentData()
     const { atts } = data
@@ -235,6 +239,14 @@ Template.afTags.events({
     const index = parseInt(input.attr('data-index'), 10)
     const target = templateInstance.state.get('target')
 
+    // in some cases users enter new text but don't commit
+    // the input, which is where we auto-commit
+    const value = input.val()
+
+    if (index === -1 && value?.length > 0) {
+      applyInput({ templateInstance })
+    }
+
     if (index === target) {
       templateInstance.state.set('target', null)
     }
@@ -321,8 +333,6 @@ Template.afTags.events({
   },
 
   'click/touchstart .aftags-close' (event, templateInstance) {
-    event.preventDefault()
-    event.stopPropagation()
     // delete tag
     const input = templateInstance.$(event.currentTarget)
     const doubleIndex = templateInstance.state.get('double')
@@ -339,10 +349,7 @@ Template.afTags.events({
 
     templateInstance.$('#afTags-hiddenInput').val(JSON.stringify(value))
     templateInstance.state.set('value', value)
-
-    setTimeout(() => {
-      templateInstance.$('.aftags-input').focus()
-    }, 30)
+    input.blur()
   },
 
   'mousedown/touchstart .aftags-tag' (event, templateInstance) {

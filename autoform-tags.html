@@ -1,5 +1,5 @@
 <template name="afTags">
-	<div class="d-flex justify-content-between">
+    <div class="d-flex justify-content-between">
         {{! number of tag limits }}
         {{#if showTagLimits}}
             <span class="aftags-range text-muted">
@@ -8,87 +8,96 @@
         {{/if}}
 
         {{! character limits }}
-		{{#if showCharLimits}}
-			<span class="aftags-range  {{#if limitsExceeded}}text-warning{{else}}text-muted{{/if}}">
-				{{#with minLength}}{{this}} &lt; {{/with}}&#x270E;{{currentLenth}}{{#with maxLength}} &lt; {{this}}{{/with}}
+        {{#if showCharLimits}}
+            <span class="aftags-range  {{#if limitsExceeded}}text-warning{{else}}text-muted{{/if}}">
+				{{#with minLength}}{{this}} &lt; {{/with}}&#x270E;{{currentLenth}}{{#with maxLength}}
+                &lt; {{this}}{{/with}}
 			</span>
-		{{/if}}
-	</div>
-	<div class="card aftags-container {{#if invalid}}border-danger{{/if}}">
-		<table class="table">
+        {{/if}}
+    </div>
+    <div class="card aftags-container {{#if invalid}}border-danger{{/if}}">
+        <table class="table">
             <tbody>
-                <tr>
-                    <td>
-                        {{#each tags}}
-                            <div class="btn-group w-100 aftags-tag-container" role="group">
+            <tr>
+                <td>
+                    {{#each tags}}
+                        <div class="btn-group w-100 aftags-tag-container" role="group">
 
-                                {{! the current selected tag to be edited }}
-                                {{#if isSelected @index}}
+                            {{! the current selected tag to be edited }}
+                            {{#if isSelected @index}}
                                 <div class="input-group mb-2">
-                                    <textarea type="text" class="form-control aftags-input aftags-wrap" maxlength="{{maxLength}}"
-                                          autofocus data-index="{{@index}}">{{this}}</textarea>
+                                    <textarea type="text" class="form-control aftags-input aftags-wrap"
+                                              maxlength="{{maxLength}}"
+                                              autofocus data-index="{{@index}}">{{this}}</textarea>
                                     <div class="input-group-append">
-                                        <button id="aftags-input-applybutton" type="button" class="btn btn-success">&#x2714;</button>
-                                    </div>
-                                </div>
-                                {{! an unselected tag}}
-                                {{else}}
-                                    <div class="btn-group w-100 mb-2" role="group">
-                                        <button class="w-100 text-left btn {{#if isDouble @index}}btn-warning{{else}}btn-outline-secondary{{/if}} btn aftags-tag aftags-wrap"
-                                                type="button"
-                                                data-index="{{@index}}">{{this}}</button>
-                                        <button class="btn btn-secondary aftags-close"
-                                                type="button"
-                                                data-index="{{@index}}">
-                                            &times;
+                                        <button id="aftags-input-applybutton" type="button" class="btn btn-success">
+                                            &#x2714;
                                         </button>
                                     </div>
-                                {{/if}}
-                            </div>
-                        {{/each}}
+                                </div>
+                            {{! an unselected tag}}
+                            {{else}}
+                                <div class="btn-group w-100 mb-2" role="group">
+                                    <button class="w-100 text-left btn {{#if isDouble
+                                                                             @index}}btn-warning{{else}}btn-outline-secondary{{/if}} btn aftags-tag aftags-wrap"
+                                            type="button"
+                                            data-index="{{@index}}">{{this}}</button>
+                                    <button class="btn btn-secondary aftags-close"
+                                            type="button"
+                                            data-index="{{@index}}">
+                                        &times;
+                                    </button>
+                                </div>
+                            {{/if}}
+                        </div>
+                    {{/each}}
 
-                        {{#if isSelected null}}
-                            <div class="mt-3">
-                                {{#if editMode}}
+                    {{#if isSelected null}}
+                        <div class="mt-3">
+                            {{#if editMode}}
                                 <div class="input-group">
-                                    <textarea type="text" class="form-control aftags-input aftags-wrap" maxlength="{{maxLength}}"
-                                           autofocus data-index="-1" rows="1"></textarea>
+                                    <textarea type="text" class="form-control aftags-input aftags-wrap"
+                                              maxlength="{{maxLength}}"
+                                              autofocus data-index="-1" rows="1"></textarea>
                                     <div class="input-group-append">
-                                        <button id="aftags-input-applybutton" disabled="{{#if limitsExceeded}}disabled{{/if}}"
-                                                type="button" class="btn btn-success">&#x2714;</button>
+                                        <button id="aftags-input-applybutton"
+                                                disabled="{{#if limitsExceeded}}disabled{{/if}}"
+                                                type="button" class="btn btn-success">+
+                                        </button>
                                     </div>
                                 </div>
-                                {{else}}
-                                    <button id="aftags-input-add-tag-button" class="btn btn-block btn-success">
-                                        <strong>+</strong>
-                                        <span>{{placeholder}}</span>
-                                    </button>
-                                {{/if}}
-                            </div>
-                        {{/if}}
-                    </td>
-                </tr>
+                            {{else}}
+                                <button id="aftags-input-add-tag-button" class="btn btn-block btn-success">
+                                    <strong>+</strong>
+                                    <span>{{placeholder}}</span>
+                                </button>
+                            {{/if}}
+                        </div>
+                    {{/if}}
+                </td>
+            </tr>
             </tbody>
-		</table>
+        </table>
 
         {{! optional predefined tags that can be selected }}
-		{{#if showSelectOptions}}
-			<div class="card-footer aftags-options">
-				{{#each selectOptions}}
-					{{#unless selected this}}
-						<button class="btn btn btn-secondary aftags-tag aftags-wrap aftags-option" data-target="{{this}}">
-							{{this}}
-						</button>
-					{{else}}
-						<button class="btn btn btn-secondary disabled aftags-option" disabled>
-							{{this}}
-						</button>
-					{{/unless}}
-				{{/each}}
-			</div>
-		{{/if}}
+        {{#if showSelectOptions}}
+            <div class="card-footer aftags-options">
+                {{#each selectOptions}}
+                    {{#unless selected this}}
+                        <button class="btn btn btn-secondary aftags-tag aftags-wrap aftags-option"
+                                data-target="{{this}}">
+                            {{this}}
+                        </button>
+                    {{else}}
+                        <button class="btn btn btn-secondary disabled aftags-option" disabled>
+                            {{this}}
+                        </button>
+                    {{/unless}}
+                {{/each}}
+            </div>
+        {{/if}}
 
-	</div>
+    </div>
 
     {{!-- ERRORS, VALIDATION ETC, --}}
     <div class="{{#unless invalid}}d-none{{else}}d-block{{/unless}} help-block text-danger">
@@ -97,5 +106,5 @@
 
 
     <!-- autoform related field-->
-	<input type="hidden" id="afTags-hiddenInput" data-schema-key="{{dataSchemaKey}}" />
+    <input type="hidden" id="afTags-hiddenInput" data-schema-key="{{dataSchemaKey}}"/>
 </template>
