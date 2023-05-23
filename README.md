@@ -13,9 +13,13 @@ You can check out the latest published state of this package using [this example
 
 ### Changelog
 
+**2.1.1**
+- added support for AutoForm 7
+
 **2.1.0**
 - fire blur on input when close (x) button is pressed
 - on new input blur with text inside the text is added as element
+- not published, use 2.1.1
 
 **2.0.0**
 
